@@ -299,6 +299,10 @@
             }
         }
 
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (prefers-reduced-motion: no-preference) {
             .animate-on-scroll {
                 animation: slideUp 0.8s var(--ease-smooth) forwards;
@@ -1695,6 +1699,11 @@
         const personaPills = document.querySelectorAll('.persona-pill');
         const chips = document.querySelectorAll('.chip');
 
+        // Update this URL after deploying to Render:
+        // const API_URL = 'https://regulens-api.onrender.com/api/query';
+        const API_URL = 'https://regulens-api.onrender.com/api/query';
+        const API_URL_LOCAL = 'http://localhost:8000/api/query';
+
         let isListening = false;
         let currentPersona = 'lead_auditor';
         const personaThresholds = {
@@ -1703,6 +1712,7 @@
             legal_counsel: 0.96
         };
 
+        // Fallback demo data — shown when API is unreachable
         const sampleClaims = {
             lead_auditor: [
                 { text: 'EU AI Act Art. 9 requires documented risk assessment for high-risk systems.', verdict: 'PASS', score: 0.98 },
@@ -1748,30 +1758,74 @@
             });
         });
 
-        function displayClaims(persona) {
+        function personaDisplayName(key) {
+            return key.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        function renderResults(results, fromApi) {
             claimRows.innerHTML = '';
-            const claims = sampleClaims[persona];
-            claims.forEach((claim, index) => {
+
+            if (!fromApi) {
+                const banner = document.createElement('div');
+                banner.style.cssText = 'padding:0.5rem 0.75rem;background:rgba(249,115,22,0.12);border:1px solid #f97316;color:#f97316;font-size:0.75rem;margin-bottom:0.75rem;';
+                banner.textContent = 'Demo mode — API offline';
+                claimRows.appendChild(banner);
+            }
+
+            results.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = 'claim-row';
                 row.style.animationDelay = `${index * 0.1}s`;
-                
-                const verdictClass = `verdict-${claim.verdict.toLowerCase()}`;
+
+                const verdict = item.verdict || (item.score >= 0.75 ? 'PASS' : item.score >= 0.45 ? 'FLAG' : 'BLOCK');
+                const score = item.similarity !== undefined ? item.similarity : item.score;
+                const label = item.article_ref || item.text;
+                const detail = item.content || item.text;
+                const verdictClass = `verdict-${verdict.toLowerCase()}`;
+
                 row.innerHTML = `
-                    <div class="claim-text">${claim.text}</div>
-                    <div class="claim-verdict ${verdictClass}">
-                        ${claim.verdict}
+                    <div class="claim-text">
+                        <strong style="color:var(--color-teal);font-size:0.75rem">${label}</strong><br>
+                        <span style="font-size:0.78rem">${detail.slice(0, 180)}${detail.length > 180 ? '…' : ''}</span>
                     </div>
-                    <div class="confidence-score">${claim.score.toFixed(2)}</div>
+                    <div class="claim-verdict ${verdictClass}">${verdict}</div>
+                    <div class="confidence-score">${parseFloat(score).toFixed(3)}</div>
                 `;
                 claimRows.appendChild(row);
             });
         }
 
+        async function runQuery(query) {
+            claimRows.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--color-white-50)"><div style="display:inline-block;width:24px;height:24px;border:2px solid var(--color-teal);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite"></div><p style="margin-top:0.75rem;font-size:0.85rem">Querying regulatory corpus…</p></div>';
+
+            const personaMap = { lead_auditor: 'Lead Auditor', ml_engineer: 'ML Engineer', legal_counsel: 'Legal Counsel' };
+            const personaName = personaMap[currentPersona] || 'Lead Auditor';
+
+            // Try production API, then local, then demo fallback
+            const urls = [API_URL, API_URL_LOCAL];
+            for (const url of urls) {
+                try {
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query, persona: personaName }),
+                        signal: AbortSignal.timeout(8000),
+                    });
+                    if (!resp.ok) continue;
+                    const data = await resp.json();
+                    renderResults(data.results, true);
+                    return;
+                } catch (_) { /* try next */ }
+            }
+
+            // Fallback to demo
+            renderResults(sampleClaims[currentPersona], false);
+        }
+
         analyzeBtn.addEventListener('click', () => {
             const query = textInput.value.trim();
             if (query) {
-                displayClaims(currentPersona);
+                runQuery(query);
                 textInput.value = '';
             }
         });
