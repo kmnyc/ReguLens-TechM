@@ -1729,32 +1729,39 @@
             });
         }
 
-        function renderApiResults(results) {
+        function renderApiResults(data) {
             claimRows.innerHTML = '';
+            claimRows.style.display = 'block';
+            claimRows.style.visibility = 'visible';
+            const results = data.results;
             if (!results || !results.length) {
                 claimRows.innerHTML = '<p style="text-align:center;color:#888;padding:32px 0;">No results found for that query.</p>';
                 return;
             }
-            const threshold = personaThresholds[currentPersona];
-            results.forEach((r) => {
-                const isCompliant = r.similarity >= 0.75;
-                const snippet = (r.content || '').replace(/\n/g, ' ').slice(0, 200).trim();
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom:16px;padding:12px;background:#f0f2f5;border-radius:8px;font-size:0.82rem;color:#333;';
+            header.innerHTML = '<strong>Persona:</strong> ' + data.persona + ' &nbsp;|&nbsp; <strong>Threshold:</strong> ' + data.threshold + ' &nbsp;|&nbsp; <strong>Results:</strong> ' + results.length;
+            claimRows.appendChild(header);
+            results.forEach(function(r) {
+                const isCompliant = r.confidence >= data.threshold;
+                const snippet = (r.content || '').replace(/\n/g, ' ').slice(0, 250).trim();
                 const reason = isCompliant
-                    ? `Verified against ${r.article_ref} — similarity ${r.similarity.toFixed(2)}`
-                    : `Below threshold ${threshold.toFixed(2)} — similarity ${r.similarity.toFixed(2)}`;
-                const badgeBg  = isCompliant ? '#2D8A4E' : '#DC3545';
-                const badgeTxt = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
+                    ? 'Verified against ' + r.article_ref + ' — confidence ' + r.confidence + ' meets threshold ' + data.threshold
+                    : 'Below threshold — confidence ' + r.confidence + ' < required ' + data.threshold;
+                const verdictColor = r.verdict === 'PASS' ? '#2D8A4E' : r.verdict === 'FLAG' ? '#D4A017' : '#DC3545';
+                const complianceColor = isCompliant ? '#2D8A4E' : '#DC3545';
+                const complianceTxt  = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
                 const row = document.createElement('div');
-                row.style.cssText = 'border:1px solid #ddd;padding:16px;margin:8px 0;border-radius:8px;background:#fff;';
-                row.innerHTML = `
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                        <strong style="color:#1a1a2e;">${r.article_ref}</strong>
-                        <span style="background:${badgeBg};color:#fff;padding:2px 10px;border-radius:4px;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;">${badgeTxt}</span>
-                        <span style="margin-left:auto;font-family:monospace;font-size:0.8rem;color:#555;">conf: ${r.similarity.toFixed(2)}</span>
-                    </div>
-                    <p style="color:#444;font-size:0.82rem;margin:4px 0;">${reason}</p>
-                    <p style="color:#666;font-size:0.78rem;line-height:1.5;margin-top:6px;">${snippet}…</p>
-                `;
+                row.style.cssText = 'border:1px solid #ddd;padding:16px;margin:8px 0;border-radius:8px;background:white;';
+                row.innerHTML =
+                    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
+                        '<strong style="color:#1a1a2e;">' + r.article_ref + '</strong>' +
+                        '<span style="background:' + verdictColor + ';color:white;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700;">' + r.verdict + '</span>' +
+                        '<span style="background:' + complianceColor + ';color:white;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700;">' + complianceTxt + '</span>' +
+                        '<span style="color:#666;font-size:13px;margin-left:auto;">Similarity: ' + r.similarity.toFixed(4) + '</span>' +
+                    '</div>' +
+                    '<div style="color:#333;font-size:14px;margin-bottom:8px;"><strong>Reason:</strong> ' + reason + '</div>' +
+                    '<div style="color:#666;font-size:13px;background:#f8f9fa;padding:8px;border-radius:4px;line-height:1.5;">' + snippet + '…</div>';
                 claimRows.appendChild(row);
             });
         }
@@ -1783,7 +1790,7 @@
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
                 console.log('ReguLens: API response:', data);
-                renderApiResults(data.results);
+                renderApiResults(data);
             } catch (err) {
                 console.warn('ReguLens: API error, falling back to demo data:', err.message);
                 offlineBanner.style.display = 'block';
