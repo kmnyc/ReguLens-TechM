@@ -1732,28 +1732,29 @@
         function renderApiResults(results) {
             claimRows.innerHTML = '';
             if (!results || !results.length) {
-                claimRows.innerHTML = '<p style="text-align:center;color:#888;padding:32px 0;">No results found for that query.</p>';
+                claimRows.innerHTML = '<div style="text-align:center;color:var(--color-white-50);padding:var(--spacing-2xl) 0;"><p>No results found for that query.</p></div>';
                 return;
             }
             const threshold = personaThresholds[currentPersona];
-            results.forEach((r) => {
-                const isCompliant = r.similarity >= 0.75;
-                const snippet = (r.content || '').replace(/\n/g, ' ').slice(0, 200).trim();
-                const reason = isCompliant
-                    ? `Verified against ${r.article_ref} — similarity ${r.similarity.toFixed(2)}`
-                    : `Below threshold ${threshold.toFixed(2)} — similarity ${r.similarity.toFixed(2)}`;
-                const badgeBg  = isCompliant ? '#2D8A4E' : '#DC3545';
-                const badgeTxt = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
+            results.forEach((r, i) => {
                 const row = document.createElement('div');
-                row.style.cssText = 'border:1px solid #ddd;padding:16px;margin:8px 0;border-radius:8px;background:#fff;';
+                row.className = 'claim-row';
+                row.style.animationDelay = `${i * 0.1}s`;
+                const isCompliant = r.similarity >= 0.75;
+                const verdictLabel = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
+                const verdictClass = isCompliant ? 'verdict-compliant' : 'verdict-noncompliant';
+                const snippet = (r.content || '').slice(0, 200).trim();
+                const reason = isCompliant
+                    ? `Verified against ${r.article_ref} with confidence ${r.similarity.toFixed(2)}`
+                    : `Insufficient confidence: ${r.similarity.toFixed(2)} below threshold ${threshold.toFixed(2)}`;
                 row.innerHTML = `
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                        <strong style="color:#1a1a2e;">${r.article_ref}</strong>
-                        <span style="background:${badgeBg};color:#fff;padding:2px 10px;border-radius:4px;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;">${badgeTxt}</span>
-                        <span style="margin-left:auto;font-family:monospace;font-size:0.8rem;color:#555;">conf: ${r.similarity.toFixed(2)}</span>
+                    <div class="claim-text">
+                        <div class="api-result-article">${r.article_ref}</div>
+                        <div class="api-result-snippet">${snippet}…</div>
+                        <div class="api-result-reason">${reason}</div>
                     </div>
-                    <p style="color:#444;font-size:0.82rem;margin:4px 0;">${reason}</p>
-                    <p style="color:#666;font-size:0.78rem;line-height:1.5;margin-top:6px;">${snippet}…</p>
+                    <div class="claim-verdict ${verdictClass}">${verdictLabel}</div>
+                    <div class="confidence-score">${r.similarity.toFixed(2)}</div>
                 `;
                 claimRows.appendChild(row);
             });
@@ -1773,19 +1774,16 @@
             offlineBanner.style.display = 'none';
 
             try {
-                console.log('ReguLens: fetching', API_URL, 'query:', query);
                 const resp = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query, persona: personaApiNames[currentPersona] }),
-                    signal: AbortSignal.timeout(20000),
+                    signal: AbortSignal.timeout(9000),
                 });
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
-                console.log('ReguLens: API response:', data);
                 renderApiResults(data.results);
-            } catch (err) {
-                console.warn('ReguLens: API error, falling back to demo data:', err.message);
+            } catch (_) {
                 offlineBanner.style.display = 'block';
                 displayClaims(currentPersona);
             }
@@ -1961,66 +1959,55 @@
         }
 
         const FIXED_FINDINGS = [
-            { text: 'Risk management framework references detected', verdict: 'PASS',  color: '#2D8A4E', score: '0.94' },
-            { text: 'Data protection obligations identified',        verdict: 'FLAG',  color: '#D4A017', score: '0.78' },
-            { text: 'No explicit AI system classification found',    verdict: 'BLOCK', color: '#DC3545', score: '0.41' },
+            { text: 'Risk management framework references detected', verdict: 'PASS',  score: 0.94 },
+            { text: 'Data protection obligations identified',        verdict: 'FLAG',  score: 0.78 },
+            { text: 'No explicit AI system classification found',    verdict: 'BLOCK', score: 0.41 },
         ];
 
-        function readFileAsText(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload  = e => resolve(e.target.result);
-                reader.onerror = () => reject(new Error('FileReader error'));
-                reader.readAsText(file);
-            });
-        }
-
         analyzeDocsBtn.addEventListener('click', async () => {
-            uploadResults.style.display = 'block';
             if (!uploadedFiles.length) {
-                uploadResults.innerHTML = '<p style="color:#888;font-size:0.88rem;padding:12px 0;">No files selected. Drop files above first.</p>';
+                uploadResults.style.display = 'flex';
+                uploadResults.innerHTML = '<p style="color:var(--color-white-50);font-size:0.85rem;">No files selected. Drop files above first.</p>';
                 return;
             }
             uploadResults.innerHTML = '';
+            uploadResults.style.display = 'flex';
 
             for (const file of uploadedFiles) {
                 const ext = file.name.split('.').pop().toLowerCase();
                 const item = document.createElement('div');
-                item.style.cssText = 'border:1px solid #ddd;padding:16px;margin:10px 0;border-radius:8px;background:#fff;';
+                item.className = 'upload-result-item';
 
                 if (TEXT_EXTS.has(ext)) {
                     let text = '';
-                    try { text = await readFileAsText(file); } catch (_) {}
+                    try { text = await file.text(); } catch (_) {}
                     const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
                     const relevance = (0.72 + Math.random() * 0.26).toFixed(2);
-
-                    const findingRows = FIXED_FINDINGS.map(f => `
-                        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;">
-                            <span style="flex:1;font-size:0.85rem;color:#333;">${f.text}</span>
-                            <span style="background:${f.color};color:#fff;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:700;white-space:nowrap;">${f.verdict}</span>
-                            <span style="font-family:monospace;font-size:0.78rem;color:#777;white-space:nowrap;">${f.score}</span>
+                    const rows = FIXED_FINDINGS.map(c => `
+                        <div class="upload-claim-row">
+                            <span>${c.text}</span>
+                            <div class="claim-verdict verdict-${c.verdict.toLowerCase()}">${c.verdict}</div>
+                            <div class="confidence-score">${c.score.toFixed(2)}</div>
                         </div>
                     `).join('');
-
                     item.innerHTML = `
-                        <div style="font-weight:700;font-size:0.95rem;color:#1a1a2e;margin-bottom:8px;">${file.name}</div>
-                        <div style="font-size:0.82rem;color:#555;margin-bottom:12px;">
+                        <div class="upload-result-filename">${file.name}</div>
+                        <div class="upload-metadata-msg" style="margin-bottom:0.75rem;">
                             Size: ${fmtSize(file.size)} &nbsp;·&nbsp; Words: ${wordCount.toLocaleString()} &nbsp;·&nbsp; Regulatory relevance: <strong>${relevance}</strong>
                         </div>
-                        <div>${findingRows}</div>
+                        <div class="upload-result-claims">${rows}</div>
                     `;
                 } else {
                     item.innerHTML = `
-                        <div style="font-weight:700;font-size:0.95rem;color:#1a1a2e;margin-bottom:6px;">${file.name}</div>
-                        <div style="font-size:0.85rem;color:#555;">
-                            ${fmtSize(file.size)} &nbsp;·&nbsp; ${ext.toUpperCase()}<br>
+                        <div class="upload-result-filename">${file.name}</div>
+                        <div class="upload-metadata-msg">
+                            ${fmtSize(file.size)} · ${ext.toUpperCase()}<br>
                             Binary file — full parsing available in backend deployment.
                         </div>
                     `;
                 }
 
                 uploadResults.appendChild(item);
-                console.log('ReguLens: processed upload', file.name);
             }
         });
 
