@@ -8,20 +8,20 @@
     <style>
         /* CSS Custom Properties */
         :root {
-            --color-navy-base: #f8f9fa;
-            --color-navy-dark: #f0f2f5;
-            --color-teal: #00b894;
+            --color-navy-base: #0a1628;
+            --color-navy-dark: #0f2040;
+            --color-teal: #00d4aa;
             --color-orange: #f97316;
             --color-crimson: #ef4444;
-            --color-blue: #3b82f6;
-            --color-violet: #7c3aed;
-            --color-slate: #6b7280;
-            --color-white: #1a1a2e;
-            --color-white-70: rgba(26, 26, 46, 0.72);
-            --color-white-50: rgba(26, 26, 46, 0.5);
-            --color-white-30: rgba(26, 26, 46, 0.3);
-            --color-white-8: rgba(0, 0, 0, 0.08);
-            --color-teal-12: rgba(0, 184, 148, 0.12);
+            --color-blue: #60a5fa;
+            --color-violet: #a78bfa;
+            --color-slate: #8fa3bf;
+            --color-white: #f8fafc;
+            --color-white-70: rgba(248, 250, 252, 0.7);
+            --color-white-50: rgba(248, 250, 252, 0.5);
+            --color-white-30: rgba(248, 250, 252, 0.3);
+            --color-white-8: rgba(248, 250, 252, 0.08);
+            --color-teal-12: rgba(0, 212, 170, 0.12);
             --color-orange-12: rgba(249, 115, 22, 0.12);
 
             --spacing-xs: 0.5rem;
@@ -138,10 +138,9 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            backdrop-filter: blur(12px);
-            background-color: rgba(255, 255, 255, 0.92);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(10px);
+            background-color: rgba(10, 22, 40, 0.8);
+            border-bottom: 1px solid var(--color-white-8);
         }
 
         nav .container {
@@ -390,10 +389,9 @@
 
         .stat-card {
             padding: var(--spacing-lg);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
+            border: 1px solid var(--color-white-8);
+            background-color: rgba(15, 32, 64, 0.5);
             border-radius: 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .stat-value {
@@ -503,13 +501,12 @@
         .agent-card {
             position: relative;
             padding: var(--spacing-2xl);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
+            border: 1px solid var(--color-white-8);
+            background-color: rgba(15, 32, 64, 0.6);
             border-radius: 0;
             transition: all 0.3s ease;
             animation: slideUp 0.6s var(--ease-smooth) forwards;
             opacity: 0;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
         }
 
         .agent-card:nth-child(1) { animation-delay: 0.1s; }
@@ -571,12 +568,11 @@
         .agent-iv-container {
             position: relative;
             padding: var(--spacing-2xl);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, rgba(124, 58, 237, 0.06) 100%);
+            border: 1px solid var(--color-white-8);
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(167, 139, 250, 0.05) 100%);
             border-radius: 0;
             animation: slideUp 0.6s var(--ease-smooth) 0.4s forwards;
             opacity: 0;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
         }
 
         .agent-iv-badge {
@@ -666,8 +662,8 @@
 
         .transcript-box {
             padding: var(--spacing-lg);
-            background-color: #f8f9fa;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: rgba(15, 32, 64, 0.8);
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             min-height: 80px;
             color: var(--color-white-70);
@@ -682,8 +678,8 @@
         .text-input {
             flex: 1;
             padding: var(--spacing-md);
-            background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.12);
+            background-color: rgba(15, 32, 64, 0.8);
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             color: var(--color-white);
             font-family: var(--font-body);
@@ -703,8 +699,8 @@
 
         .persona-pill {
             padding: 0.625rem 1rem;
-            background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.12);
+            background-color: transparent;
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             color: var(--color-white-70);
             cursor: pointer;
@@ -727,15 +723,14 @@
 
         .chip {
             padding: var(--spacing-md);
-            background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: rgba(15, 32, 64, 0.8);
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             color: var(--color-white-70);
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.3s ease;
             text-align: left;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
 
         .chip:hover {
@@ -747,12 +742,11 @@
 
         .demo-right {
             padding: var(--spacing-2xl);
-            background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            background-color: rgba(15, 32, 64, 0.8);
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         }
 
         .dashboard-header {
@@ -829,8 +823,8 @@
 
         .claim-row {
             padding: var(--spacing-md);
-            background-color: #f8f9fa;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            background-color: rgba(15, 32, 64, 0.5);
+            border: 1px solid var(--color-white-8);
             border-radius: 0;
             display: grid;
             grid-template-columns: 1fr auto auto;
@@ -876,12 +870,12 @@
         .upload-header { text-align: center; margin-bottom: var(--spacing-3xl); }
 
         .drop-zone {
-            border: 2px dashed rgba(0, 0, 0, 0.15);
+            border: 2px dashed var(--color-white-8);
             padding: var(--spacing-3xl) var(--spacing-2xl);
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background-color: rgba(248, 249, 250, 0.8);
+            background-color: rgba(15, 32, 64, 0.3);
             margin-bottom: var(--spacing-lg);
             user-select: none;
         }
@@ -938,9 +932,8 @@
             align-items: center;
             gap: var(--spacing-sm);
             padding: 0.875rem var(--spacing-md);
-            background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            background-color: rgba(15, 32, 64, 0.8);
+            border: 1px solid var(--color-white-8);
         }
 
         .file-chip-name {
@@ -997,9 +990,8 @@
 
         .upload-result-item {
             padding: var(--spacing-lg);
-            background-color: #f8f9fa;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            background-color: rgba(15, 32, 64, 0.6);
+            border: 1px solid var(--color-white-8);
         }
 
         .upload-result-filename {
@@ -1045,12 +1037,11 @@
 
         .feed-item {
             padding: var(--spacing-2xl);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
+            border: 1px solid var(--color-white-8);
+            background-color: rgba(15, 32, 64, 0.6);
             border-radius: 0;
             animation: slideUp 0.6s var(--ease-smooth) forwards;
             opacity: 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .feed-item:nth-child(1) { animation-delay: 0.1s; }
@@ -1096,13 +1087,12 @@
 
         .evaluation-card {
             padding: var(--spacing-2xl);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
+            border: 1px solid var(--color-white-8);
+            background-color: rgba(15, 32, 64, 0.6);
             border-radius: 0;
             animation: slideUp 0.6s var(--ease-smooth) forwards;
             opacity: 0;
             position: relative;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .evaluation-card:nth-child(1) { animation-delay: 0.1s; }
@@ -1138,13 +1128,12 @@
             flex: 1;
             min-width: 200px;
             padding: var(--spacing-2xl);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
+            border: 1px solid var(--color-white-8);
+            background-color: rgba(15, 32, 64, 0.6);
             border-radius: 0;
             text-align: center;
             animation: slideUp 0.6s var(--ease-smooth) forwards;
             opacity: 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .pipeline-step:nth-child(1) { animation-delay: 0.1s; }
@@ -1172,8 +1161,8 @@
         /* Footer */
         footer {
             padding: var(--spacing-2xl) 0;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            background-color: #f0f2f5;
+            border-top: 1px solid var(--color-white-8);
+            background-color: rgba(10, 22, 40, 0.5);
             text-align: center;
             color: var(--color-white-50);
             font-size: 0.85rem;
