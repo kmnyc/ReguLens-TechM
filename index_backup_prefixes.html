@@ -394,18 +394,11 @@
             background-color: #ffffff;
             border-radius: 0;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            min-width: 0;
         }
 
         .stat-value {
             font-family: var(--font-display);
             font-weight: 800;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
             font-size: 2.5rem;
             color: var(--color-teal);
             margin-bottom: var(--spacing-xs);
@@ -866,15 +859,9 @@
             white-space: nowrap;
         }
 
-        .verdict-pass        { background-color: rgba(0, 212, 170, 0.15); color: var(--color-teal);   border: 1px solid var(--color-teal); }
-        .verdict-flag        { background-color: rgba(249, 115, 22, 0.15); color: var(--color-orange); border: 1px solid var(--color-orange); }
-        .verdict-block       { background-color: rgba(239, 68, 68, 0.15);  color: var(--color-crimson);border: 1px solid var(--color-crimson); }
-        .verdict-compliant   { background-color: rgba(45, 138, 78, 0.12);  color: #2D8A4E; border: 1px solid #2D8A4E; font-weight: 700; }
-        .verdict-noncompliant{ background-color: rgba(220, 53, 69, 0.12);  color: #DC3545; border: 1px solid #DC3545; font-weight: 700; }
-
-        .api-result-article { font-weight: 600; font-size: 0.82rem; margin-bottom: 0.25rem; color: var(--color-white); }
-        .api-result-snippet { font-size: 0.8rem; color: var(--color-white-70); line-height: 1.5; margin-bottom: 0.3rem; }
-        .api-result-reason  { font-size: 0.75rem; color: var(--color-white-50); font-style: italic; }
+        .verdict-pass  { background-color: rgba(0, 212, 170, 0.15); color: var(--color-teal);   border: 1px solid var(--color-teal); }
+        .verdict-flag  { background-color: rgba(249, 115, 22, 0.15); color: var(--color-orange); border: 1px solid var(--color-orange); }
+        .verdict-block { background-color: rgba(239, 68, 68, 0.15);  color: var(--color-crimson);border: 1px solid var(--color-crimson); }
 
         .confidence-score {
             font-family: 'Courier New', monospace;
@@ -1265,8 +1252,8 @@
                             <div class="stat-label">NLI Threshold</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" title="EU AI Act fines up to €35M or 7% global revenue">€35M+</div>
-                            <div class="stat-label">EU AI Act Max Fine</div>
+                            <div class="stat-value">€35M+</div>
+                            <div class="stat-label">Penalty Exposure</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" data-count="7">0</div>
@@ -1295,7 +1282,7 @@
                         </div>
                         <div class="problem-card">
                             <div class="problem-card-title">Penalty Exposure</div>
-                            <div class="problem-card-desc">EU AI Act fines up to €35M or 7% global revenue. Regulatory bodies are already auditing.</div>
+                            <div class="problem-card-desc">€35M+ fines under EU AI Act enforcement. Regulatory bodies are already auditing.</div>
                             <div class="severity-bar"></div>
                         </div>
                         <div class="problem-card">
@@ -1424,9 +1411,9 @@
                         <div>
                             <div class="label" style="margin-bottom: var(--spacing-sm);">Example Queries</div>
                             <div class="suggestion-chips">
-                                <button class="chip" data-query="What are the risk management requirements under EU AI Act Article 9 for high-risk AI systems?">What are the risk management requirements under EU AI Act Article 9 for high-risk AI systems?</button>
-                                <button class="chip" data-query="What transparency obligations does EU AI Act Article 13 impose on high-risk AI systems?">What transparency obligations does EU AI Act Article 13 impose on high-risk AI systems?</button>
-                                <button class="chip" data-query="What AI practices are explicitly prohibited under EU AI Act Article 5?">What AI practices are explicitly prohibited under EU AI Act Article 5?</button>
+                                <button class="chip" data-query="What does EU AI Act Art. 9 require for risk management?">What does EU AI Act Art. 9 require for risk management?</button>
+                                <button class="chip" data-query="Map NIST GOVERN 1.6 to EU AI Act Art. 13">Map NIST GOVERN 1.6 to EU AI Act Art. 13</button>
+                                <button class="chip" data-query="All obligations for a high-risk employment AI system">All obligations for a high-risk employment AI system</button>
                             </div>
                         </div>
                     </div>
@@ -1735,25 +1722,14 @@
                 claimRows.innerHTML = '<div style="text-align:center;color:var(--color-white-50);padding:var(--spacing-2xl) 0;"><p>No results found for that query.</p></div>';
                 return;
             }
-            const threshold = personaThresholds[currentPersona];
             results.forEach((r, i) => {
                 const row = document.createElement('div');
                 row.className = 'claim-row';
                 row.style.animationDelay = `${i * 0.1}s`;
-                const isCompliant = r.similarity >= 0.75;
-                const verdictLabel = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
-                const verdictClass = isCompliant ? 'verdict-compliant' : 'verdict-noncompliant';
-                const snippet = (r.content || '').slice(0, 200).trim();
-                const reason = isCompliant
-                    ? `Verified against ${r.article_ref} with confidence ${r.similarity.toFixed(2)}`
-                    : `Insufficient confidence: ${r.similarity.toFixed(2)} below threshold ${threshold.toFixed(2)}`;
+                const snippet = (r.content || '').slice(0, 130).trim();
                 row.innerHTML = `
-                    <div class="claim-text">
-                        <div class="api-result-article">${r.article_ref}</div>
-                        <div class="api-result-snippet">${snippet}…</div>
-                        <div class="api-result-reason">${reason}</div>
-                    </div>
-                    <div class="claim-verdict ${verdictClass}">${verdictLabel}</div>
+                    <div class="claim-text"><strong>${r.article_ref}</strong> — ${snippet}…</div>
+                    <div class="claim-verdict verdict-${r.verdict.toLowerCase()}">${r.verdict}</div>
                     <div class="confidence-score">${r.similarity.toFixed(2)}</div>
                 `;
                 claimRows.appendChild(row);
@@ -1958,20 +1934,12 @@
             return out.slice(0, 6);
         }
 
-        const FIXED_FINDINGS = [
-            { text: 'Risk management framework references detected', verdict: 'PASS',  score: 0.94 },
-            { text: 'Data protection obligations identified',        verdict: 'FLAG',  score: 0.78 },
-            { text: 'No explicit AI system classification found',    verdict: 'BLOCK', score: 0.41 },
-        ];
-
         analyzeDocsBtn.addEventListener('click', async () => {
             if (!uploadedFiles.length) {
-                uploadResults.style.display = 'flex';
                 uploadResults.innerHTML = '<p style="color:var(--color-white-50);font-size:0.85rem;">No files selected. Drop files above first.</p>';
                 return;
             }
             uploadResults.innerHTML = '';
-            uploadResults.style.display = 'flex';
 
             for (const file of uploadedFiles) {
                 const ext = file.name.split('.').pop().toLowerCase();
@@ -1981,28 +1949,32 @@
                 if (TEXT_EXTS.has(ext)) {
                     let text = '';
                     try { text = await file.text(); } catch (_) {}
-                    const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-                    const relevance = (0.72 + Math.random() * 0.26).toFixed(2);
-                    const rows = FIXED_FINDINGS.map(c => `
-                        <div class="upload-claim-row">
-                            <span>${c.text}</span>
-                            <div class="claim-verdict verdict-${c.verdict.toLowerCase()}">${c.verdict}</div>
-                            <div class="confidence-score">${c.score.toFixed(2)}</div>
-                        </div>
-                    `).join('');
-                    item.innerHTML = `
-                        <div class="upload-result-filename">${file.name}</div>
-                        <div class="upload-metadata-msg" style="margin-bottom:0.75rem;">
-                            Size: ${fmtSize(file.size)} &nbsp;·&nbsp; Words: ${wordCount.toLocaleString()} &nbsp;·&nbsp; Regulatory relevance: <strong>${relevance}</strong>
-                        </div>
-                        <div class="upload-result-claims">${rows}</div>
-                    `;
+                    const claims = assessText(text);
+
+                    if (!claims.length) {
+                        item.innerHTML = `
+                            <div class="upload-result-filename">${file.name}</div>
+                            <div class="upload-metadata-msg">No regulatory keywords detected. Content appears unrelated to EU AI Act / NIST AI RMF / ISO 42001.</div>
+                        `;
+                    } else {
+                        const rows = claims.map(c => `
+                            <div class="upload-claim-row">
+                                <span>${c.text}</span>
+                                <div class="claim-verdict verdict-${c.verdict.toLowerCase()}">${c.verdict}</div>
+                                <div class="confidence-score">${c.score}</div>
+                            </div>
+                        `).join('');
+                        item.innerHTML = `
+                            <div class="upload-result-filename">${file.name}</div>
+                            <div class="upload-result-claims">${rows}</div>
+                        `;
+                    }
                 } else {
                     item.innerHTML = `
                         <div class="upload-result-filename">${file.name}</div>
                         <div class="upload-metadata-msg">
-                            ${fmtSize(file.size)} · ${ext.toUpperCase()}<br>
-                            Binary file — full parsing available in backend deployment.
+                            <strong>Metadata:</strong> ${file.name} · ${fmtSize(file.size)} · ${ext.toUpperCase()}<br>
+                            Full text extraction for ${ext.toUpperCase()} is available in the backend deployment. Upload to the ReguLens platform for complete chunk-level pgvector analysis.
                         </div>
                     `;
                 }
