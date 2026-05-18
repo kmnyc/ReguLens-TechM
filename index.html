@@ -1192,6 +1192,82 @@
             font-size: 0.85rem;
         }
 
+        /* ── Audit Trail Table ────────────────────────────────────────── */
+        .audit-header { text-align: center; margin-bottom: var(--spacing-xl); }
+        .audit-header h2 { margin-bottom: var(--spacing-xs); }
+        .audit-header p { color: var(--color-white-70); font-size: 1.05rem; }
+
+        .audit-controls {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: var(--spacing-md); gap: 1rem; flex-wrap: wrap;
+        }
+        .audit-refresh-btn {
+            background: var(--color-teal); color: #fff; border: none;
+            padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.85rem;
+            cursor: pointer; font-family: var(--font-body); font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .audit-refresh-btn:hover { opacity: 0.85; }
+        .audit-chain-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.8rem; font-weight: 500; padding: 0.35rem 0.75rem;
+            border-radius: 20px; background: rgba(0,184,148,0.12);
+            color: var(--color-teal);
+        }
+        .audit-chain-badge.invalid { background: rgba(239,68,68,0.12); color: var(--color-crimson); }
+
+        .audit-table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--color-white-8);
+            border-radius: 12px;
+        }
+        .audit-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.82rem; font-family: var(--font-body);
+        }
+        .audit-table thead th {
+            background: var(--color-navy-dark);
+            color: var(--color-white-70);
+            padding: 0.75rem 1rem;
+            text-align: left; font-weight: 600;
+            font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--color-white-8);
+        }
+        .audit-table tbody tr {
+            border-bottom: 1px solid var(--color-white-8);
+            transition: background 0.15s;
+        }
+        .audit-table tbody tr:last-child { border-bottom: none; }
+        .audit-table tbody tr:hover { background: var(--color-navy-dark); }
+        .audit-table td {
+            padding: 0.65rem 1rem; vertical-align: middle;
+            color: var(--color-white);
+        }
+        .audit-query-cell {
+            max-width: 220px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .audit-verdict { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
+        .audit-verdict.pass { color: var(--color-teal); }
+        .audit-verdict.flag { color: var(--color-orange); }
+        .audit-verdict.fail { color: var(--color-crimson); }
+        .audit-persona-pill {
+            display: inline-block; font-size: 0.72rem; font-weight: 500;
+            padding: 0.2rem 0.55rem; border-radius: 20px;
+            background: rgba(59,130,246,0.12); color: var(--color-blue);
+        }
+        .audit-hash {
+            font-family: 'Courier New', monospace; font-size: 0.72rem;
+            color: var(--color-white-50); letter-spacing: -0.02em;
+        }
+        .audit-event-id {
+            font-family: 'Courier New', monospace; font-size: 0.7rem;
+            color: var(--color-white-50);
+        }
+        .audit-loading { text-align: center; padding: 2rem; color: var(--color-white-50); }
+        .audit-empty { text-align: center; padding: 2rem; color: var(--color-white-30); font-size: 0.9rem; }
+
         /* Scroll reveal */
         .scroll-reveal { opacity: 0; transform: translateY(30px); }
 
@@ -1235,6 +1311,7 @@
                 <li><a href="#demo">Demo</a></li>
                 <li><a href="#upload">Upload</a></li>
                 <li><a href="#evaluation">Evaluation</a></li>
+                <li><a href="#audit">Audit Trail</a></li>
             </ul>
         </div>
     </nav>
@@ -1606,6 +1683,39 @@
                         <div class="pipeline-step-title">Verification</div>
                         <div class="pipeline-step-desc">Agent III runs NLI. Atomic claims verified. Verdict: ENTAIL | CONTRADICT | NEUTRAL. Audit logged.</div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audit Trail Section -->
+        <section id="audit">
+            <div class="container">
+                <div class="audit-header scroll-reveal">
+                    <h2>Immutable Audit Trail</h2>
+                    <p>Every query, verdict, and source citation — SHA-256 hash-chained and tamper-evident.</p>
+                </div>
+
+                <div class="audit-controls scroll-reveal">
+                    <span class="audit-chain-badge" id="chainBadge">⟳ Checking chain…</span>
+                    <button class="audit-refresh-btn" id="auditRefreshBtn" onclick="loadAuditTrail()">Refresh ↺</button>
+                </div>
+
+                <div class="audit-table-wrap scroll-reveal">
+                    <table class="audit-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Query</th>
+                                <th>Persona</th>
+                                <th>Verdict</th>
+                                <th>Event ID</th>
+                                <th>Row Hash</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody">
+                            <tr><td colspan="6" class="audit-loading">Loading audit events…</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -2116,6 +2226,106 @@
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             document.documentElement.style.setProperty('--ease-smooth', 'linear');
         }
+
+        // ============================================
+        // AUDIT TRAIL
+        // ============================================
+        const AUDIT_EVENTS_URL = 'https://regulens-api-bnlw.onrender.com/api/audit/events';
+        const AUDIT_VERIFY_URL = 'https://regulens-api-bnlw.onrender.com/api/audit/verify';
+
+        function fmtTimestamp(ts) {
+            if (!ts) return '—';
+            const d = new Date(ts);
+            return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function truncate(str, n) {
+            if (!str) return '—';
+            return str.length > n ? str.slice(0, n) + '…' : str;
+        }
+
+        function verdictClass(v) {
+            if (!v) return '';
+            const u = v.toUpperCase();
+            if (u === 'PASS' || u === 'COMPLIANT' || u === 'ENTAIL') return 'pass';
+            if (u === 'FLAG' || u === 'CONDITIONAL' || u === 'NEUTRAL') return 'flag';
+            return 'fail';
+        }
+
+        function personaLabel(p) {
+            if (!p) return '—';
+            return p.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        async function loadAuditTrail() {
+            const tbody = document.getElementById('auditTableBody');
+            const badge = document.getElementById('chainBadge');
+            tbody.innerHTML = '<tr><td colspan="6" class="audit-loading">Loading audit events…</td></tr>';
+            badge.textContent = '⟳ Checking chain…';
+            badge.className = 'audit-chain-badge';
+
+            try {
+                const [eventsRes, verifyRes] = await Promise.all([
+                    fetch(AUDIT_EVENTS_URL),
+                    fetch(AUDIT_VERIFY_URL),
+                ]);
+
+                // Chain validity badge
+                if (verifyRes.ok) {
+                    const vd = await verifyRes.json();
+                    const valid = vd.chain_valid === true;
+                    badge.textContent = valid
+                        ? `✓ Chain valid · ${vd.event_count ?? ''} events`
+                        : `✗ Chain BROKEN · ${vd.breaks ?? 0} breaks`;
+                    badge.className = 'audit-chain-badge' + (valid ? '' : ' invalid');
+                }
+
+                if (!eventsRes.ok) throw new Error(`HTTP ${eventsRes.status}`);
+                const events = await eventsRes.json();
+
+                if (!events || events.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="audit-empty">No audit events found.</td></tr>';
+                    return;
+                }
+
+                // Newest first
+                const sorted = [...events].sort((a, b) =>
+                    new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+                tbody.innerHTML = sorted.map(ev => {
+                    const verdict = ev.verdict || ev.overall_verdict || '—';
+                    const vc = verdictClass(verdict);
+                    const shortId = ev.event_id ? ev.event_id.slice(0, 8) : '—';
+                    const hash = ev.event_hash || ev.row_hash || ev.hash || '';
+                    const shortHash = hash ? hash.slice(0, 12) : '—';
+                    const query = ev.query_text || ev.query || '—';
+                    return `<tr>
+                        <td style="white-space:nowrap;font-size:0.78rem;">${fmtTimestamp(ev.created_at)}</td>
+                        <td><div class="audit-query-cell" title="${query.replace(/"/g,'&quot;')}">${truncate(query, 55)}</div></td>
+                        <td><span class="audit-persona-pill">${personaLabel(ev.persona)}</span></td>
+                        <td><span class="audit-verdict ${vc}">${verdict}</span></td>
+                        <td><span class="audit-event-id">${shortId}…</span></td>
+                        <td><span class="audit-hash">${shortHash}…</span></td>
+                    </tr>`;
+                }).join('');
+
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="audit-empty">Failed to load: ${err.message}</td></tr>`;
+                badge.textContent = '⚠ API offline';
+                badge.className = 'audit-chain-badge invalid';
+            }
+        }
+
+        // Auto-load when audit section scrolls into view
+        const auditObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                loadAuditTrail();
+                auditObserver.disconnect();
+            }
+        }, { threshold: 0.1 });
+        const auditSection = document.getElementById('audit');
+        if (auditSection) auditObserver.observe(auditSection);
     </script>
 </body>
 </html>
