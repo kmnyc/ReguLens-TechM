@@ -1,8 +1,8 @@
 # ReguLens — Project Status
 
-> **Last Updated:** 2026-05-18 (DSPy MIPROv2 100.0% — all Caveman v3 prompts complete)
+> **Last Updated:** 2026-05-19 (frontend-v3 live API wired — /api/v2/query, field-name fix)
 > **Updated By:** Kareem Mohammed
-> **Version:** v3.2 — COMPLETE ✅
+> **Version:** v3.3 — frontend-v3 live
 
 ---
 
@@ -181,6 +181,26 @@ python src/dspy_modules/optimize.py
 | **Failure routing** | ✅ LIVE | FLAG cascade verified (avg_conf 0.73 for vague queries) |
 | **Frontend** | ✅ LIVE | https://kmnyc.github.io/ReguLens-TechM/ |
 | **API** | ✅ LIVE | https://regulens-api-bnlw.onrender.com |
+| **frontend-v3** | ✅ LIVE | `frontend-v3/index.html` — v2 API wired, nav sections, sidebar stats, templates |
+
+### frontend-v3 (2026-05-19)
+
+Full UI rewrite with live API integration. Committed `0306bb6` + `<fix-commit>`.
+
+**API schema (confirmed via OpenAPI):**
+- `POST /api/v2/query` — LangGraph full pipeline. Body: `{"query": "...", "persona": "lead_auditor"}`
+- Request field is `query` (not `question`). Persona accepts underscore format.
+- Response: `raw_answer`, `overall_verdict`, `avg_confidence`, `retrieved_chunks[]`, `claims[]`, `audit_event_id`
+- `POST /api/query` — returns `QueryResponse` (chunk list only, no synthesized answer — use v2 for UI)
+- Verdict values: `PASS`, `FLAG` (failure routing), `GAP_REPORT`, `RETRY_RETRIEVE`
+
+**Features:**
+- Nav sections: Query / Audit Trail / Corpus / Observability each show/hide their section
+- Framework nav (EU AI Act / NIST / ISO 42001) pre-fills textarea and switches to query view
+- Sidebar stats panel: 100% benchmark, DSPy MIPROv2, 347 chunks, SHA-256, Opik traces
+- 5 sample query template pills
+- Auto-scroll to answer after response loads
+- Run button disabled during in-flight request; error box on API failure
 
 ### DSPy Note
 DSPy (`dspy-ai` package) exceeds Render free tier Docker build limits (heavy transitive deps: datasets, optuna, litellm). Optimization runs locally; `optimized_synthesizer.json` artifact is committed to repo. Live server runs graceful raw-LLM fallback. To enable DSPy on server: upgrade to Render paid tier OR uncomment `dspy-ai>=2.5.0` in `requirements.txt` and redeploy on a capable host.

@@ -533,10 +533,10 @@ async function runQuery() {
   const t0 = Date.now();
 
   try {
-    const res = await fetch(API_BASE + '/api/query', {
+    const res = await fetch(API_BASE + '/api/v2/query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, persona })
+      body: JSON.stringify({ query: question, persona })
     });
 
     bar.style.width = '100%';
@@ -549,25 +549,27 @@ async function runQuery() {
     const data = await res.json();
     const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
 
-    const answer = data.answer || data.response || data.text || data.result || JSON.stringify(data, null, 2);
-    const rawVerdict = (data.verdict || data.status || 'COMPLIANT').toUpperCase();
-    const confidence = typeof data.confidence === 'number'
-      ? data.confidence.toFixed(2)
-      : (data.score != null ? Number(data.score).toFixed(2) : '—');
-    const topSim = data.top_similarity != null
-      ? Number(data.top_similarity).toFixed(4)
-      : (data.similarity != null ? Number(data.similarity).toFixed(4) : '—');
-    const chunksUsed = data.chunks_used ?? data.num_chunks ?? (Array.isArray(data.retrieved_spans) ? data.retrieved_spans.length : null);
-    const claimsRaw = data.claims_verified ?? data.verified_claims ?? null;
-    const claimsStr = claimsRaw != null ? String(claimsRaw) : '—';
+    // QueryV2Response field mapping
+    const answer = data.raw_answer || data.answer || data.result || JSON.stringify(data, null, 2);
+    const rawVerdict = (data.overall_verdict || data.verdict || 'PASS').toUpperCase();
+    const confidence = typeof data.avg_confidence === 'number'
+      ? data.avg_confidence.toFixed(2)
+      : (typeof data.confidence === 'number' ? data.confidence.toFixed(2) : '—');
+    const chunks = Array.isArray(data.retrieved_chunks) ? data.retrieved_chunks : [];
+    const topSim = chunks.length > 0
+      ? Math.max(...chunks.map(c => c.similarity ?? 0)).toFixed(4)
+      : '—';
+    const claims = Array.isArray(data.claims) ? data.claims : [];
+    const passClaims = claims.filter(c => (c.verdict || '').toUpperCase() === 'PASS').length;
+    const claimsStr = claims.length > 0 ? passClaims + '/' + claims.length + ' claims' : '—';
 
     const verdictMap = {
-      COMPLIANT: 'vpass', PASS: 'vpass',
-      CONDITIONAL: 'vpart', PARTIAL: 'vpart', GAP_REPORT: 'vpart', RETRY_RETRIEVE: 'vpart',
+      COMPLIANT: 'vpass', PASS: 'vpass', RESPOND: 'vpass',
+      CONDITIONAL: 'vpart', PARTIAL: 'vpart', GAP_REPORT: 'vpart', RETRY_RETRIEVE: 'vpart', FLAG: 'vpart',
       NON_COMPLIANT: 'vgap', FAIL: 'vgap', REJECTED: 'vgap'
     };
     const vc = verdictMap[rawVerdict] || 'vpart';
-    const vLabel = rawVerdict === 'NON_COMPLIANT' ? 'FAIL' : rawVerdict;
+    const vLabel = rawVerdict === 'NON_COMPLIANT' ? 'FAIL' : rawVerdict === 'RESPOND' ? 'PASS' : rawVerdict;
 
     setTimeout(() => {
       loading.classList.remove('show');
