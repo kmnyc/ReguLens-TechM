@@ -1,8 +1,8 @@
 # ReguLens — Project Status
 
-> **Last Updated:** 2026-05-19 (frontend-v3 animations + live query validation)
+> **Last Updated:** 2026-05-20 (DSPy self-improvement loop — feedback_events, retrain.py, weekly_retrain.yml)
 > **Updated By:** Kareem Mohammed
-> **Version:** v3.5 — frontend-v3 animations: count-up, typing, fade-in, slide-up, corpus bars, tooltips
+> **Version:** v3.6 — self-improvement loop: feedback capture → MIPROv2 retrain → quality gate → weekly GitHub Actions
 
 ---
 
@@ -206,8 +206,40 @@ Full UI rewrite with live API integration. Committed `0306bb6` + `<fix-commit>`.
 - **v3.5 animations:** count-up on stat cards (27 / 0.92 / 100%), typing placeholder cycling 5 queries, scroll-triggered fade-in on section cards (IntersectionObserver), slide-up entrance on result card (cubic-bezier), animated corpus progress bars + DSPy journey bars on section show, hover tooltips on Agent I/II/III boxes; pre-animation tag: `pre-frontend-v3-animations`
 - **v3.5 live test results:** 3/3 queries PASS — Art.9 lead_auditor (conf 1.0), Art.5 legal_counsel (conf 1.0), NIST GOVERN ml_engineer (conf 1.0)
 
+### Self-Improvement Loop (v3.6, 2026-05-20)
+
+**Safety tag:** `pre-self-improvement` at `79bb807` (backend) / `c51e304` (frontend)
+**Backend commit:** `edd38d2`
+
+**Components:**
+| File | Purpose |
+|---|---|
+| `src/services/feedback.py` | `feedback_events` table: query_text, persona, confidence, verdict, used_for_training |
+| `app.py` (modified) | `/api/v2/query` logs low-conf (conf < threshold) or non-PASS queries to feedback_events |
+| `src/retrain.py` | Loads unused feedback, merges with benchmarks, runs MIPROv2, quality gate (save only if new_score >= current_score), marks feedback used |
+| `.github/workflows/weekly_retrain.yml` | Cron: Monday 00:00 UTC — installs dspy-ai, runs retrain.py, commits JSON if gate passes |
+
+**Flow:**
+```
+/api/v2/query (low-conf or non-PASS)
+    → feedback_events (Neon)
+    → weekly_retrain.yml (Monday 00:00 UTC)
+        → retrain.py: feedback + benchmarks → MIPROv2 (DeepSeek)
+        → quality gate: new_score >= current_score?
+            YES → save optimized_synthesizer.json, mark events used, git push → Render redeploy
+            NO  → keep existing, no commit
+```
+
+**GitHub Secrets required (already set):** `DATABASE_URL`, `DEEPSEEK_API_KEY`, `GROQ_API_KEY`, `OPIK_API_KEY`, `OPIK_WORKSPACE`
+
+**Rollback:** `git checkout pre-self-improvement -- src/dspy_modules/optimized_synthesizer.json`
+
+**Feedback trigger:** queries where `avg_confidence < persona_threshold` OR `overall_verdict != "PASS"` — these are the hardest queries and highest signal for retraining.
+
+**Live test (2026-05-20):** `/api/v2/query` confirmed working after redeploy, feedback_events table created, feedback logging verified.
+
 ### DSPy Note
-DSPy (`dspy-ai` package) exceeds Render free tier Docker build limits (heavy transitive deps: datasets, optuna, litellm). Optimization runs locally; `optimized_synthesizer.json` artifact is committed to repo. Live server runs graceful raw-LLM fallback. To enable DSPy on server: upgrade to Render paid tier OR uncomment `dspy-ai>=2.5.0` in `requirements.txt` and redeploy on a capable host.
+DSPy (`dspy-ai` package) exceeds Render free tier Docker build limits (heavy transitive deps: datasets, optuna, litellm). Optimization runs locally or in GitHub Actions; `optimized_synthesizer.json` artifact is committed to repo. Live server runs graceful raw-LLM fallback. To enable DSPy on server: upgrade to Render paid tier OR uncomment `dspy-ai>=2.5.0` in `requirements.txt` and redeploy on a capable host.
 
 | # | Prompt | Risk | Status |
 |---|---|---|---|
