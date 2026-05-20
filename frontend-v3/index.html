@@ -179,7 +179,7 @@ input[type=file]{display:none}
 .ag-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:3px}
 .ag-stat{font-size:11px;font-family:var(--mono);color:var(--ink3)}
 .ag-hi{color:var(--accent)}
-.ans-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;font-size:13.5px;line-height:1.78;color:var(--ink);white-space:pre-wrap}
+.ans-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;font-size:13.5px;line-height:1.78;color:var(--ink)}
 .ans-box strong{font-weight:500;color:var(--ink)}
 .cite{display:inline-flex;align-items:center;font-family:var(--mono);font-size:10.5px;background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:1px 6px;border-radius:4px;margin:0 2px}
 
@@ -222,6 +222,52 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
 .trace-ms{color:var(--ink3);font-size:11px}
 .opik-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:5px 11px;border-radius:20px;background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent)}
 
+/* ARCHITECTURE */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.arch-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:22px 24px;box-shadow:var(--shadow)}
+.arch-card-full{grid-column:1/-1}
+.arch-title{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:16px}
+.arch-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.arch-tbl th{text-align:left;padding:7px 12px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:1px solid var(--border);font-weight:400}
+.arch-tbl td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+.arch-tbl tr:last-child td{border-bottom:none}
+.arch-layer{font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;padding-right:14px!important}
+/* Pipeline */
+.pipeline{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.pipe-node{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex:1;min-width:110px}
+.pipe-node.pipe-end{flex:0.7;border-color:var(--border2)}
+.pipe-tag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:4px}
+.pipe-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.pipe-lbl{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.pipe-icon{font-size:18px;margin-bottom:4px}
+.pipe-desc{font-size:10px;font-family:var(--mono);color:var(--ink3);line-height:1.5}
+.pipe-a1{border-top:2px solid var(--accent)}.pipe-a2{border-top:2px solid var(--green)}.pipe-a3{border-top:2px solid var(--amber)}
+.pipe-arrow{font-size:20px;color:var(--ink3);align-self:center;flex-shrink:0;padding-top:4px}
+/* Score journey */
+.score-journey{display:flex;flex-direction:column;gap:10px}
+.sj-step{display:grid;grid-template-columns:58px 1fr 260px;gap:12px;align-items:center}
+.sj-score{font-family:var(--display);font-size:14px;font-weight:700;color:var(--ink2);text-align:right}
+.sj-bar{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.sj-fill{height:100%;background:var(--accent);border-radius:4px}
+.sj-fill-win{background:var(--green)}
+.sj-lbl{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.sj-win .sj-score{color:var(--green)}.sj-win .sj-lbl{color:var(--ink2);font-weight:500}
+/* Instruction box */
+.instr-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:var(--r);padding:14px 16px;font-size:11.5px;font-family:var(--mono);color:var(--ink2);line-height:1.75;white-space:pre-wrap}
+/* Deployment flow */
+.deploy-flow{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.df-node{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;min-width:80px}
+.df-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.df-user{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.2)}
+.df-gh{background:var(--surface);color:var(--ink2);border:1px solid var(--border2)}
+.df-render{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.2)}
+.df-neon{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,90,0,.2)}
+.df-groq{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2)}
+.df-opik{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.15)}
+.df-lbl{font-size:12px;font-weight:500;color:var(--ink);text-align:center}
+.df-sub{font-size:10px;font-family:var(--mono);color:var(--ink3);text-align:center;line-height:1.4}
+.df-arr{font-size:18px;color:var(--border2);flex-shrink:0}
+
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px}
 </style>
 </head>
@@ -253,6 +299,9 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
       </div>
       <div class="nav-item" data-section="observability" onclick="setNav(this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Observability
+      </div>
+      <div class="nav-item" data-section="architecture" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg>Architecture
       </div>
       <div class="nav-sec" style="margin-top:10px">Frameworks</div>
       <div class="nav-item" data-section="query" data-template="What are the prohibited AI practices under EU AI Act Article 5 and what penalties apply?" onclick="setNav(this)">
@@ -469,6 +518,243 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
         </div>
       </div>
 
+      <!-- ARCHITECTURE SECTION -->
+      <div class="section" id="section-architecture">
+
+        <!-- Pipeline flow -->
+        <div class="arch-card">
+          <div class="arch-title">Tri-Agent Pipeline</div>
+          <div class="pipeline">
+            <div class="pipe-node pipe-end">
+              <div class="pipe-icon">👤</div>
+              <div class="pipe-lbl">User Query</div>
+              <div class="pipe-desc">Natural language compliance question</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a1">
+              <div class="pipe-tag">Agent I</div>
+              <div class="pipe-name">Horizon Ingestion</div>
+              <div class="pipe-desc">pgvector cosine sim · top 5 chunks · threshold ≥ 0.45 · Neon</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a2">
+              <div class="pipe-tag">Agent II</div>
+              <div class="pipe-name">Persona Synthesis</div>
+              <div class="pipe-desc">Groq Llama 3.3 70B · Instruction 2 · MIPROv2 optimised</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a3">
+              <div class="pipe-tag">Agent III</div>
+              <div class="pipe-name">Zero-Trust Critic</div>
+              <div class="pipe-desc">Claim-level NLI · PASS / FLAG / GAP_REPORT routing</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-end">
+              <div class="pipe-icon">🔐</div>
+              <div class="pipe-lbl">Audit Log</div>
+              <div class="pipe-desc">SHA-256 hash chain · Neon PostgreSQL · Opik trace</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-grid">
+
+          <!-- Tech Stack -->
+          <div class="arch-card">
+            <div class="arch-title">Tech Stack</div>
+            <table class="arch-tbl">
+              <tr><td class="arch-layer">Backend</td><td>FastAPI on Render (free tier)</td></tr>
+              <tr><td class="arch-layer">Database</td><td>Neon PostgreSQL + pgvector</td></tr>
+              <tr><td class="arch-layer">LLM</td><td>Groq Llama 3.3 70B (free tier)</td></tr>
+              <tr><td class="arch-layer">Frontend</td><td>GitHub Pages (static HTML)</td></tr>
+              <tr><td class="arch-layer">Orchestration</td><td>LangGraph StateGraph (7 nodes)</td></tr>
+              <tr><td class="arch-layer">Observability</td><td>Opik / Comet · project: regulens</td></tr>
+              <tr><td class="arch-layer">Prompt Opt.</td><td>DSPy MIPROv2 · 11 trials · 15 examples</td></tr>
+              <tr><td class="arch-layer">Embeddings</td><td>nomic-embed-text (Ollama) / pgvector</td></tr>
+            </table>
+          </div>
+
+          <!-- Persona System -->
+          <div class="arch-card">
+            <div class="arch-title">Persona System</div>
+            <table class="arch-tbl">
+              <thead><tr><th>Persona</th><th>Threshold</th><th>Focus</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="arch-layer">lead_auditor</td>
+                  <td><span class="chip cg">0.96</span></td>
+                  <td style="font-size:11px">Risk classification, compliance findings, penalties</td>
+                </tr>
+                <tr>
+                  <td class="arch-layer">legal_counsel</td>
+                  <td><span class="chip cg">0.96</span></td>
+                  <td style="font-size:11px">Statutory basis, enforcement exposure, article citations</td>
+                </tr>
+                <tr>
+                  <td class="arch-layer">ml_engineer</td>
+                  <td><span class="chip cb">0.88</span></td>
+                  <td style="font-size:11px">Technical implementation, MLOps controls, logging</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:12px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              Routing: &lt;30% fail → RESPOND · 30–50% → RETRY_RETRIEVE · &gt;50% → GAP_REPORT
+            </div>
+          </div>
+
+          <!-- DSPy Journey — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">DSPy MIPROv2 Optimization Journey · 42.5% → 100.0%</div>
+            <div class="score-journey">
+              <div class="sj-step">
+                <div class="sj-score">42.5%</div>
+                <div class="sj-bar"><div class="sj-fill" style="width:42.5%"></div></div>
+                <div class="sj-lbl">v1 · empty context · Groq 100k TPD exhausted, trials 2–10 zeroed</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">83.33%</div>
+                <div class="sj-bar"><div class="sj-fill" style="width:83.33%"></div></div>
+                <div class="sj-lbl">v2 · metric fix → keyword-based scoring of prediction.answer</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">88.89%</div>
+                <div class="sj-bar"><div class="sj-fill" style="width:88.89%"></div></div>
+                <div class="sj-lbl">v3 · 15 examples · ISO 42001 corpus added · 50 new chunks</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">97.22%</div>
+                <div class="sj-bar"><div class="sj-fill" style="width:97.22%"></div></div>
+                <div class="sj-lbl">v4 · real Neon context prefetch via _prefetch_contexts() · grounded vocabulary</div>
+              </div>
+              <div class="sj-step sj-win">
+                <div class="sj-score">100.0%</div>
+                <div class="sj-bar"><div class="sj-fill sj-fill-win" style="width:100%"></div></div>
+                <div class="sj-lbl">v5 · Article 5 retrieval fix · 1061-char summary chunk added · sim=0.9955 · default program 100%, 8/11 trials 100% ✓</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;font-size:11px;font-family:var(--mono);color:var(--ink3)">
+              Winner: Instruction 0 + Few-Shot Set 5 · Root cause: original 4519-char Article 5 chunk embedded on first 512 chars only — "unacceptable risk" vocabulary never surfaced
+            </div>
+          </div>
+
+          <!-- SHA-256 Hash Chain -->
+          <div class="arch-card">
+            <div class="arch-title">SHA-256 Immutable Audit Chain</div>
+            <div style="font-size:12.5px;color:var(--ink2);line-height:1.75;margin-bottom:14px">
+              Every query creates an immutable audit event. Each event's SHA-256 hash is computed over
+              <code style="font-family:var(--mono);font-size:11px;background:var(--surface);padding:1px 5px;border-radius:4px">event_data + prev_hash</code>,
+              forming a tamper-evident chain. Any modification breaks all subsequent hashes.
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:11px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:3px 9px;border-radius:6px;white-space:nowrap">event_1</span>
+                <span style="color:var(--ink3)">SHA-256(data + "genesis") → <strong style="color:var(--ink)">a3f9b2…e8d4</strong></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:3px 9px;border-radius:6px;white-space:nowrap">event_2</span>
+                <span style="color:var(--ink3)">SHA-256(data + a3f9b2…) → <strong style="color:var(--ink)">d7c4a1…f29b</strong></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--green);flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="color:var(--green)">104 events · 0 breaks · chain_valid: true · GET /api/audit/verify</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Winning Instruction 2 -->
+          <div class="arch-card">
+            <div class="arch-title">Winning MIPROv2 Instruction (Live in Pipeline)</div>
+            <div class="instr-box">You are an AI compliance specialist. Analyze the given regulatory context and question. Provide a structured answer with:
+1. Relevant article references from the context
+2. Key compliance requirements
+3. Practical implementation guidance
+Be precise, cite specific articles, and focus on actionable compliance steps.</div>
+            <div style="margin-top:10px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              Source: DSPy MIPROv2 Instruction 2 · Active in pipeline.py _call_groq system prompt<br>
+              Persona confidence gates: lead_auditor/legal_counsel 0.96 · ml_engineer 0.88
+            </div>
+          </div>
+
+          <!-- Opik Observability -->
+          <div class="arch-card">
+            <div class="arch-title">Opik Observability</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+              <span class="opik-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Live traces
+              </span>
+              <span class="chip cg">project: regulens</span>
+            </div>
+            <div class="obs-stat-grid">
+              <div class="obs-stat"><div class="obs-stat-val">27+</div><div class="obs-stat-lbl">Opik traces</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">104</div><div class="obs-stat-lbl">Audit events</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">1.0</div><div class="obs-stat-lbl">Result count score</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">0.92</div><div class="obs-stat-lbl">Avg confidence</div></div>
+            </div>
+            <div style="margin-top:12px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              @opik_track on: _embed · _search · _call_groq<br>
+              track_langgraph(compiled) · ClaimAccuracyMetric · ThresholdComplianceMetric<br>
+              DSPy + Opik eval: verdict_accuracy=0.9 · avg_confidence=0.9176
+            </div>
+          </div>
+
+          <!-- Deployment Architecture — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">Deployment Architecture</div>
+            <div class="deploy-flow">
+              <div class="df-node">
+                <div class="df-icon df-user">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="df-lbl">User</div>
+                <div class="df-sub">Browser<br>Any device</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-gh">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77A5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </div>
+                <div class="df-lbl">GitHub Pages</div>
+                <div class="df-sub">Static HTML<br>frontend-v3/</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-render">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div class="df-lbl">Render</div>
+                <div class="df-sub">FastAPI<br>LangGraph</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-neon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                </div>
+                <div class="df-lbl">Neon</div>
+                <div class="df-sub">PostgreSQL<br>pgvector · 347 chunks</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-groq">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/></svg>
+                </div>
+                <div class="df-lbl">Groq</div>
+                <div class="df-sub">Llama 3.3 70B<br>free tier</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-opik">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="df-lbl">Opik</div>
+                <div class="df-sub">Traces · Evals<br>app.comet.com</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
@@ -481,8 +767,19 @@ const SECTION_TITLES = {
   query: 'Compliance Query',
   audit: 'Audit Trail',
   corpus: 'Corpus',
-  observability: 'Observability'
+  observability: 'Observability',
+  architecture: 'Architecture'
 };
+
+function renderMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/^#{1,3}\s+(.+)$/gm, '<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/gs, '<em>$1</em>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
 
 function setNav(el) {
   const sectionId = el.dataset.section;
@@ -581,7 +878,7 @@ async function runQuery() {
         'Confidence ' + confidence + ' · ' + persona.replace('_', ' ') + ' · ' + elapsed;
       document.getElementById('sim-val').textContent = topSim;
       document.getElementById('claims-val').textContent = claimsStr;
-      document.getElementById('ans-box').textContent = answer;
+      document.getElementById('ans-box').innerHTML = renderMarkdown(answer);
 
       qCount++;
       document.getElementById('q-count').textContent = qCount;

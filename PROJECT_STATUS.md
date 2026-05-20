@@ -1,8 +1,8 @@
 # ReguLens — Project Status
 
-> **Last Updated:** 2026-05-19 (frontend-v3 live API wired — /api/v2/query, field-name fix)
+> **Last Updated:** 2026-05-19 (frontend-v3 markdown fix + Architecture section)
 > **Updated By:** Kareem Mohammed
-> **Version:** v3.3 — frontend-v3 live
+> **Version:** v3.4 — frontend-v3 Architecture + markdown rendering
 
 ---
 
@@ -195,12 +195,14 @@ Full UI rewrite with live API integration. Committed `0306bb6` + `<fix-commit>`.
 - Verdict values: `PASS`, `FLAG` (failure routing), `GAP_REPORT`, `RETRY_RETRIEVE`
 
 **Features:**
-- Nav sections: Query / Audit Trail / Corpus / Observability each show/hide their section
+- Nav sections: Query / Audit Trail / Corpus / Observability / Architecture each show/hide their section
 - Framework nav (EU AI Act / NIST / ISO 42001) pre-fills textarea and switches to query view
 - Sidebar stats panel: 100% benchmark, DSPy MIPROv2, 347 chunks, SHA-256, Opik traces
 - 5 sample query template pills
 - Auto-scroll to answer after response loads
 - Run button disabled during in-flight request; error box on API failure
+- Markdown answer rendering: `**text**` → `<strong>`, `\n\n` → `<br><br>`, heading markers stripped
+- Architecture section: pipeline flow diagram, tech stack, persona system, DSPy journey (42.5%→100%), SHA-256 explanation, Winning Instruction 2, Opik stats, deployment flow (User→GitHub Pages→Render→Neon→Groq→Opik)
 
 ### DSPy Note
 DSPy (`dspy-ai` package) exceeds Render free tier Docker build limits (heavy transitive deps: datasets, optuna, litellm). Optimization runs locally; `optimized_synthesizer.json` artifact is committed to repo. Live server runs graceful raw-LLM fallback. To enable DSPy on server: upgrade to Render paid tier OR uncomment `dspy-ai>=2.5.0` in `requirements.txt` and redeploy on a capable host.
