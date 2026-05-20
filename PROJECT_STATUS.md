@@ -1,8 +1,8 @@
 # ReguLens — Project Status
 
-> **Last Updated:** 2026-05-19 (frontend-v3 markdown fix + Architecture section)
+> **Last Updated:** 2026-05-19 (frontend-v3 animations + live query validation)
 > **Updated By:** Kareem Mohammed
-> **Version:** v3.4 — frontend-v3 Architecture + markdown rendering
+> **Version:** v3.5 — frontend-v3 animations: count-up, typing, fade-in, slide-up, corpus bars, tooltips
 
 ---
 
@@ -203,6 +203,8 @@ Full UI rewrite with live API integration. Committed `0306bb6` + `<fix-commit>`.
 - Run button disabled during in-flight request; error box on API failure
 - Markdown answer rendering: `**text**` → `<strong>`, `\n\n` → `<br><br>`, heading markers stripped
 - Architecture section: pipeline flow diagram, tech stack, persona system, DSPy journey (42.5%→100%), SHA-256 explanation, Winning Instruction 2, Opik stats, deployment flow (User→GitHub Pages→Render→Neon→Groq→Opik)
+- **v3.5 animations:** count-up on stat cards (27 / 0.92 / 100%), typing placeholder cycling 5 queries, scroll-triggered fade-in on section cards (IntersectionObserver), slide-up entrance on result card (cubic-bezier), animated corpus progress bars + DSPy journey bars on section show, hover tooltips on Agent I/II/III boxes; pre-animation tag: `pre-frontend-v3-animations`
+- **v3.5 live test results:** 3/3 queries PASS — Art.9 lead_auditor (conf 1.0), Art.5 legal_counsel (conf 1.0), NIST GOVERN ml_engineer (conf 1.0)
 
 ### DSPy Note
 DSPy (`dspy-ai` package) exceeds Render free tier Docker build limits (heavy transitive deps: datasets, optuna, litellm). Optimization runs locally; `optimized_synthesizer.json` artifact is committed to repo. Live server runs graceful raw-LLM fallback. To enable DSPy on server: upgrade to Render paid tier OR uncomment `dspy-ai>=2.5.0` in `requirements.txt` and redeploy on a capable host.

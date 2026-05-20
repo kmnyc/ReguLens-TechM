@@ -269,6 +269,20 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
 .df-arr{font-size:18px;color:var(--border2);flex-shrink:0}
 
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px}
+
+/* TOOLTIPS on agent boxes */
+.abox{position:relative}
+.abox[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:10px;font-family:var(--mono);padding:6px 10px;border-radius:7px;white-space:normal;text-align:center;line-height:1.5;max-width:220px;pointer-events:none;opacity:0;transition:opacity .18s;z-index:200}
+.abox[data-tip]::before{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);pointer-events:none;opacity:0;transition:opacity .18s;z-index:200}
+.abox[data-tip]:hover::after,.abox[data-tip]:hover::before{opacity:1}
+
+/* SCROLL FADE-IN for section cards */
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* RESULT slide-up entrance */
+.result.show{display:block;animation:slideUp .42s cubic-bezier(.22,.68,0,1.2)}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 </style>
 </head>
 <body>
@@ -360,10 +374,10 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
       <!-- QUERY SECTION -->
       <div class="section active" id="section-query">
         <div class="stats-row">
-          <div class="stat-card"><div class="s-lbl">Queries today</div><div class="s-val" id="q-count">27</div><div class="s-sub up">↑ 12 vs yesterday</div></div>
-          <div class="stat-card"><div class="s-lbl">Avg confidence</div><div class="s-val">0.92</div><div class="s-sub up">Above all thresholds</div></div>
+          <div class="stat-card"><div class="s-lbl">Queries today</div><div class="s-val" id="q-count" data-target="27" data-suffix="">27</div><div class="s-sub up">↑ 12 vs yesterday</div></div>
+          <div class="stat-card"><div class="s-lbl">Avg confidence</div><div class="s-val" data-target="0.92" data-decimals="2" data-suffix="">0.92</div><div class="s-sub up">Above all thresholds</div></div>
           <div class="stat-card"><div class="s-lbl">Chain integrity</div><div class="s-val">Valid</div><div class="s-sub">104 events · 0 breaks</div></div>
-          <div class="stat-card"><div class="s-lbl">DSPy score</div><div class="s-val">100%</div><div class="s-sub note">MIPROv2 · 11 trials</div></div>
+          <div class="stat-card"><div class="s-lbl">DSPy score</div><div class="s-val" data-target="100" data-suffix="%">100%</div><div class="s-sub note">MIPROv2 · 11 trials</div></div>
         </div>
 
         <div class="qcard">
@@ -443,9 +457,9 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
                 <div class="res-meta" id="res-meta">Confidence 0.96 · lead_auditor threshold met</div>
               </div>
               <div class="agents">
-                <div class="abox"><div class="ag-num">Agent I</div><div class="ag-name">Horizon Ingestion</div><div class="ag-stat">chunks retrieved · top sim <span class="ag-hi" id="sim-val">—</span></div></div>
-                <div class="abox"><div class="ag-num">Agent II</div><div class="ag-name">Persona Synthesis</div><div class="ag-stat">Groq · <span class="ag-hi">Llama 3.3 70B</span></div></div>
-                <div class="abox"><div class="ag-num">Agent III</div><div class="ag-name">Zero-Trust Critic</div><div class="ag-stat"><span class="ag-hi" id="claims-val">—</span> claims verified · DeBERTa</div></div>
+                <div class="abox" data-tip="pgvector cosine similarity · Neon PostgreSQL · top 5 chunks · threshold ≥ 0.45"><div class="ag-num">Agent I</div><div class="ag-name">Horizon Ingestion</div><div class="ag-stat">chunks retrieved · top sim <span class="ag-hi" id="sim-val">—</span></div></div>
+                <div class="abox" data-tip="Groq Llama 3.3 70B · MIPROv2 Instruction 2 · persona-calibrated synthesis"><div class="ag-num">Agent II</div><div class="ag-name">Persona Synthesis</div><div class="ag-stat">Groq · <span class="ag-hi">Llama 3.3 70B</span></div></div>
+                <div class="abox" data-tip="Claim-level NLI · PASS / FLAG / GAP_REPORT routing · SHA-256 audit log · DeBERTa-v3"><div class="ag-num">Agent III</div><div class="ag-name">Zero-Trust Critic</div><div class="ag-stat"><span class="ag-hi" id="claims-val">—</span> claims verified · DeBERTa</div></div>
               </div>
               <div class="ans-box" id="ans-box"></div>
             </div>
@@ -480,9 +494,9 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
         <div class="corpus-card">
           <div class="card-lbl">Corpus coverage</div>
           <div class="corpus-list">
-            <div><div class="ci-top"><span class="ci-name">EU AI Act (2024/1689)</span><span class="ci-cnt">161 chunks</span></div><div class="track"><div class="fill fb" style="width:46%"></div></div></div>
-            <div><div class="ci-top"><span class="ci-name">NIST AI RMF 1.0 + Playbook</span><span class="ci-cnt">136 chunks</span></div><div class="track"><div class="fill fg" style="width:39%"></div></div></div>
-            <div><div class="ci-top"><span class="ci-name">ISO/IEC 42001:2023</span><span class="ci-cnt">50 chunks</span></div><div class="track"><div class="fill fa" style="width:15%"></div></div></div>
+            <div><div class="ci-top"><span class="ci-name">EU AI Act (2024/1689)</span><span class="ci-cnt">161 chunks</span></div><div class="track"><div class="fill fb" data-to="46" style="width:0%"></div></div></div>
+            <div><div class="ci-top"><span class="ci-name">NIST AI RMF 1.0 + Playbook</span><span class="ci-cnt">136 chunks</span></div><div class="track"><div class="fill fg" data-to="39" style="width:0%"></div></div></div>
+            <div><div class="ci-top"><span class="ci-name">ISO/IEC 42001:2023</span><span class="ci-cnt">50 chunks</span></div><div class="track"><div class="fill fa" data-to="15" style="width:0%"></div></div></div>
           </div>
         </div>
       </div>
@@ -608,27 +622,27 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
             <div class="score-journey">
               <div class="sj-step">
                 <div class="sj-score">42.5%</div>
-                <div class="sj-bar"><div class="sj-fill" style="width:42.5%"></div></div>
+                <div class="sj-bar"><div class="sj-fill" data-to="42.5" style="width:0%"></div></div>
                 <div class="sj-lbl">v1 · empty context · Groq 100k TPD exhausted, trials 2–10 zeroed</div>
               </div>
               <div class="sj-step">
                 <div class="sj-score">83.33%</div>
-                <div class="sj-bar"><div class="sj-fill" style="width:83.33%"></div></div>
+                <div class="sj-bar"><div class="sj-fill" data-to="83.33" style="width:0%"></div></div>
                 <div class="sj-lbl">v2 · metric fix → keyword-based scoring of prediction.answer</div>
               </div>
               <div class="sj-step">
                 <div class="sj-score">88.89%</div>
-                <div class="sj-bar"><div class="sj-fill" style="width:88.89%"></div></div>
+                <div class="sj-bar"><div class="sj-fill" data-to="88.89" style="width:0%"></div></div>
                 <div class="sj-lbl">v3 · 15 examples · ISO 42001 corpus added · 50 new chunks</div>
               </div>
               <div class="sj-step">
                 <div class="sj-score">97.22%</div>
-                <div class="sj-bar"><div class="sj-fill" style="width:97.22%"></div></div>
+                <div class="sj-bar"><div class="sj-fill" data-to="97.22" style="width:0%"></div></div>
                 <div class="sj-lbl">v4 · real Neon context prefetch via _prefetch_contexts() · grounded vocabulary</div>
               </div>
               <div class="sj-step sj-win">
                 <div class="sj-score">100.0%</div>
-                <div class="sj-bar"><div class="sj-fill sj-fill-win" style="width:100%"></div></div>
+                <div class="sj-bar"><div class="sj-fill sj-fill-win" data-to="100" style="width:0%"></div></div>
                 <div class="sj-lbl">v5 · Article 5 retrieval fix · 1061-char summary chunk added · sim=0.9955 · default program 100%, 8/11 trials 100% ✓</div>
               </div>
             </div>
@@ -797,6 +811,14 @@ function setNav(el) {
   if (template) {
     document.getElementById('qtext').value = template;
   }
+
+  // Animate bars when section becomes visible
+  if (sectionId === 'corpus') {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateBars('.fill[data-to]')));
+  }
+  if (sectionId === 'architecture') {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateBars('.sj-fill[data-to]')));
+  }
 }
 
 function setPersona(btn, p) {
@@ -957,6 +979,101 @@ function clearFile(e) {
 
 document.getElementById('qtext').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) runQuery();
+});
+
+// === ANIMATIONS ===
+
+// 1. Count-up for stat cards
+function countUp(el) {
+  const target = parseFloat(el.dataset.target);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const suffix = el.dataset.suffix || '';
+  if (isNaN(target)) return;
+  const dur = 1100, step = 16, steps = Math.ceil(dur / step);
+  let i = 0;
+  const iv = setInterval(() => {
+    i++;
+    const ease = 1 - Math.pow(1 - i / steps, 3);
+    const val = target * ease;
+    el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.round(val)) + suffix;
+    if (i >= steps) {
+      el.textContent = (decimals > 0 ? target.toFixed(decimals) : String(target)) + suffix;
+      clearInterval(iv);
+    }
+  }, step);
+}
+
+// 2. Animated bars (corpus fill bars + DSPy journey bars)
+function animateBars(selector) {
+  document.querySelectorAll(selector).forEach(bar => {
+    const to = bar.dataset.to;
+    if (!to) return;
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = '';
+      bar.style.width = to + '%';
+    }));
+  });
+}
+
+// 3. Typing placeholder effect (cycles when textarea is empty + unfocused)
+const TYPING_QUERIES = [
+  'What does EU AI Act Article 9 require for high-risk AI systems?',
+  'What are the prohibited practices under EU AI Act Article 5?',
+  'How does the NIST AI RMF GOVERN function apply to AI risk management?',
+  'What human oversight controls does ISO 42001 Clause 6 require?',
+  'What transparency obligations apply under EU AI Act Articles 13 and 14?'
+];
+let tqIdx = 0, tqPos = 0, tqDel = false;
+function typeTick() {
+  const el = document.getElementById('qtext');
+  if (document.activeElement === el || el.value.trim()) {
+    setTimeout(typeTick, 1500);
+    return;
+  }
+  const q = TYPING_QUERIES[tqIdx];
+  if (!tqDel) {
+    tqPos = Math.min(tqPos + 1, q.length);
+    el.placeholder = q.substring(0, tqPos);
+    if (tqPos >= q.length) { tqDel = true; setTimeout(typeTick, 2000); return; }
+    setTimeout(typeTick, 48);
+  } else {
+    tqPos = Math.max(tqPos - 1, 0);
+    el.placeholder = q.substring(0, tqPos);
+    if (tqPos <= 0) {
+      tqDel = false;
+      tqIdx = (tqIdx + 1) % TYPING_QUERIES.length;
+      setTimeout(typeTick, 380);
+      return;
+    }
+    setTimeout(typeTick, 26);
+  }
+}
+
+// 4. Scroll-triggered fade-in via IntersectionObserver
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      fadeObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+// 5. Init
+window.addEventListener('DOMContentLoaded', () => {
+  // Count-up stat cards (visible on load)
+  document.querySelectorAll('.s-val[data-target]').forEach(el => countUp(el));
+
+  // Typing placeholder — start after load animations settle
+  setTimeout(typeTick, 1600);
+
+  // Scroll fade-in for non-query section cards
+  document.querySelectorAll('.arch-card,.obs-card,.corpus-card,.audit-card').forEach(el => {
+    el.classList.add('fade-in');
+    fadeObs.observe(el);
+  });
 });
 </script>
 </body>
