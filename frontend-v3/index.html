@@ -283,6 +283,23 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
 /* RESULT slide-up entrance */
 .result.show{display:block;animation:slideUp .42s cubic-bezier(.22,.68,0,1.2)}
 @keyframes slideUp{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Self-Improving Pipeline flow */
+.si-flow{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;flex-wrap:wrap;margin-top:6px}
+.si-node{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:78px}
+.si-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);font-weight:700;flex-shrink:0}
+.si-api{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.2)}
+.si-db{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,90,0,.2)}
+.si-cron{background:var(--surface);color:var(--ink2);border:1px solid var(--border2);font-size:18px}
+.si-dspy{background:#f3eeff;color:#5b21b6;border:1px solid rgba(91,33,182,.18)}
+.si-gate{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.2);font-size:17px}
+.si-deploy{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.25);font-size:19px}
+.si-lbl{font-size:11.5px;font-weight:600;color:var(--ink);text-align:center;line-height:1.3}
+.si-sub{font-size:9.5px;font-family:var(--mono);color:var(--ink3);text-align:center;line-height:1.45}
+.si-arr{font-size:18px;color:var(--border2);flex-shrink:0;padding-top:11px}
+.si-win .si-lbl{color:var(--green)}
+.si-note{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.si-note-item{font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6}
 </style>
 </head>
 <body>
@@ -763,6 +780,53 @@ Be precise, cite specific articles, and focus on actionable compliance steps.</d
                 <div class="df-lbl">Opik</div>
                 <div class="df-sub">Traces · Evals<br>app.comet.com</div>
               </div>
+            </div>
+          </div>
+
+          <!-- Self-Improving Pipeline — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">Self-Improving Pipeline · Weekly MIPROv2 Retrain</div>
+            <div class="si-flow">
+              <div class="si-node">
+                <div class="si-icon si-api">v2</div>
+                <div class="si-lbl">/api/v2/query</div>
+                <div class="si-sub">conf &lt; threshold<br>OR verdict ≠ PASS</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-db">DB</div>
+                <div class="si-lbl">feedback_events</div>
+                <div class="si-sub">Neon · query, persona<br>confidence · verdict</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-cron">⏰</div>
+                <div class="si-lbl">GitHub Actions</div>
+                <div class="si-sub">Monday 00:00 UTC<br>weekly_retrain.yml</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-dspy">DSPy</div>
+                <div class="si-lbl">MIPROv2 · DeepSeek</div>
+                <div class="si-sub">feedback + benchmarks<br>src/retrain.py</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-gate">≥</div>
+                <div class="si-lbl">Quality Gate</div>
+                <div class="si-sub">new_score ≥ current<br>prevents regression</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node si-win">
+                <div class="si-icon si-deploy">🚀</div>
+                <div class="si-lbl">Auto-Deploy</div>
+                <div class="si-sub">git push → Render<br>optimized_synthesizer.json</div>
+              </div>
+            </div>
+            <div class="si-note">
+              <div class="si-note-item"><strong style="color:var(--ink)">Trigger:</strong> avg_confidence &lt; persona_threshold OR overall_verdict ≠ PASS</div>
+              <div class="si-note-item"><strong style="color:var(--green)">Gate PASS</strong> → commit JSON · mark events used · Render autodeploys</div>
+              <div class="si-note-item"><strong style="color:var(--red)">Gate FAIL</strong> → keep existing synthesizer · no commit · no regression</div>
             </div>
           </div>
 

@@ -1,8 +1,8 @@
 # ReguLens — Project Status
 
-> **Last Updated:** 2026-05-20 (DSPy self-improvement loop — feedback_events, retrain.py, weekly_retrain.yml)
+> **Last Updated:** 2026-05-20 (Architecture section: Self-Improving Pipeline card + live query validation)
 > **Updated By:** Kareem Mohammed
-> **Version:** v3.6 — self-improvement loop: feedback capture → MIPROv2 retrain → quality gate → weekly GitHub Actions
+> **Version:** v3.7 — Architecture self-improvement card: feedback_events → MIPROv2 → quality gate → auto-deploy visual flow
 
 ---
 
@@ -205,6 +205,8 @@ Full UI rewrite with live API integration. Committed `0306bb6` + `<fix-commit>`.
 - Architecture section: pipeline flow diagram, tech stack, persona system, DSPy journey (42.5%→100%), SHA-256 explanation, Winning Instruction 2, Opik stats, deployment flow (User→GitHub Pages→Render→Neon→Groq→Opik)
 - **v3.5 animations:** count-up on stat cards (27 / 0.92 / 100%), typing placeholder cycling 5 queries, scroll-triggered fade-in on section cards (IntersectionObserver), slide-up entrance on result card (cubic-bezier), animated corpus progress bars + DSPy journey bars on section show, hover tooltips on Agent I/II/III boxes; pre-animation tag: `pre-frontend-v3-animations`
 - **v3.5 live test results:** 3/3 queries PASS — Art.9 lead_auditor (conf 1.0), Art.5 legal_counsel (conf 1.0), NIST GOVERN ml_engineer (conf 1.0)
+- **v3.7 Architecture Self-Improving Pipeline card:** visual flow: `/api/v2/query` → `feedback_events` → `GitHub Actions (Mon 00:00 UTC)` → `MIPROv2 + DeepSeek` → `Quality Gate (new_score ≥ current)` → `git push → Render autodeploy`; CSS: `.si-flow/.si-node/.si-icon` variants (accent/amber/purple/green); trigger/gate/fail annotations in mono footer
+- **v3.7 live test results:** 3/3 queries PASS — Art.9 lead_auditor (conf 1.0), Art.5 legal_counsel (conf 1.0), NIST GOVERN ml_engineer (conf 1.0)
 
 ### Self-Improvement Loop (v3.6, 2026-05-20)
 
