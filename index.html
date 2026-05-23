@@ -134,7 +134,7 @@
         /* Navigation */
         nav {
             position: fixed;
-            top: 0;
+            top: 30px;
             left: 0;
             right: 0;
             z-index: 1000;
@@ -272,7 +272,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 80px;
+            padding-top: 110px;
             overflow: hidden;
         }
 
@@ -1295,9 +1295,164 @@
             .hero-ctas   { flex-direction: column; }
             .btn         { width: 100%; }
         }
+        /* ── THING 1: Disclaimer banner ── */
+        .disclaimer-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: #fef9c3;
+            border-bottom: 1px solid #f59e0b;
+            color: #92400e;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 6px 16px;
+            font-family: var(--font-body);
+            line-height: 1.5;
+        }
+
+        /* ── THING 2: GAP REPORT tooltip ── */
+        .gap-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            font-size: 13px;
+            cursor: default;
+            margin-left: 8px;
+            position: relative;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        .gap-info-icon .gap-tooltip {
+            display: none;
+            position: absolute;
+            top: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.55;
+            padding: 10px 14px;
+            border-radius: 8px;
+            width: 290px;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+            pointer-events: none;
+            white-space: normal;
+            text-align: left;
+        }
+        .gap-info-icon:hover .gap-tooltip { display: block; }
+
+        /* ── THING 3: Welcome modal ── */
+        .welcome-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.52);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .welcome-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 36px 32px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+            font-family: var(--font-body);
+        }
+        .welcome-modal h2 {
+            font-family: var(--font-display);
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        .welcome-modal p {
+            font-size: 0.93rem;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .welcome-persona-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+        }
+        .welcome-persona-table th {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .welcome-persona-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f2f5;
+            color: #555;
+        }
+        .welcome-starter {
+            background: #f0fdf8;
+            border-left: 3px solid #00b894;
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #1a1a2e;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+        .welcome-dismiss-btn {
+            background: #1a1a2e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background 0.2s;
+        }
+        .welcome-dismiss-btn:hover { background: #00b894; }
     </style>
 </head>
 <body>
+    <!-- THING 1: Disclaimer banner -->
+    <div class="disclaimer-banner">
+        ReguLens v1 — Academic prototype. Outputs are AI-generated and require human review before use in compliance decisions.
+    </div>
+
+    <!-- THING 3: Welcome modal -->
+    <div class="welcome-overlay" id="welcomeOverlay" style="display:none;">
+        <div class="welcome-modal">
+            <h2>Welcome to ReguLens</h2>
+            <p>ReguLens is an AI compliance audit platform that verifies regulatory claims against EU AI Act, NIST AI RMF, and ISO 42001 using a tri-agent pipeline: retrieve → synthesize → verify.</p>
+            <table class="welcome-persona-table">
+                <thead><tr><th>Persona</th><th>Confidence Threshold</th></tr></thead>
+                <tbody>
+                    <tr><td>Lead Auditor</td><td>0.96</td></tr>
+                    <tr><td>ML Engineer</td><td>0.88</td></tr>
+                    <tr><td>Legal Counsel</td><td>0.96</td></tr>
+                </tbody>
+            </table>
+            <p>Start with:</p>
+            <div class="welcome-starter">"What are the risk management requirements under EU AI Act Article 9 for high-risk AI systems?"</div>
+            <button class="welcome-dismiss-btn" id="welcomeDismissBtn">Get Started</button>
+        </div>
+    </div>
+
     <div class="grid-bg"></div>
 
     <!-- Navigation -->
@@ -1853,8 +2008,11 @@
             const passCount  = results.filter(function(r) { return r.confidence >= data.threshold; }).length;
             const blockCount = results.length - passCount;
             const avgConf    = (results.reduce(function(s, r) { return s + r.confidence; }, 0) / results.length).toFixed(4);
+            const isGapReport = passCount === 0;
             const overall    = passCount === results.length ? 'COMPLIANT' : passCount > 0 ? 'PARTIALLY COMPLIANT' : 'NON-COMPLIANT';
             const overallColor = overall === 'COMPLIANT' ? '#2D8A4E' : overall === 'PARTIALLY COMPLIANT' ? '#D4A017' : '#DC3545';
+            const gapIcon = '<span class="gap-info-icon">ⓘ<span class="gap-tooltip">Insufficient verified evidence: the system could not verify enough atomic claims at the required confidence threshold. This is a trust feature, not an error — it means the system is working correctly.</span></span>';
+            const overallLabel = isGapReport ? 'GAP REPORT — INSUFFICIENT EVIDENCE ' + gapIcon : overall;
             const overallReason = overall === 'COMPLIANT'
                 ? 'All ' + results.length + ' claims verified. Average confidence ' + avgConf + ' meets ' + data.persona + ' threshold of ' + data.threshold + '.'
                 : overall === 'PARTIALLY COMPLIANT'
@@ -1884,7 +2042,7 @@
 
             c.innerHTML =
                 '<div style="background:' + overallColor + ';color:white;padding:20px;border-radius:8px;margin-bottom:16px;">' +
-                    '<div style="font-size:22px;font-weight:bold;">OVERALL VERDICT: ' + overall + '</div>' +
+                    '<div style="font-size:22px;font-weight:bold;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">OVERALL VERDICT: ' + overallLabel + '</div>' +
                     '<div style="margin-top:8px;font-size:14px;">' + passCount + '/' + results.length + ' claims verified | ' + blockCount + ' blocked | Confidence: ' + avgConf + ' avg</div>' +
                     '<div style="margin-top:4px;font-size:14px;">Persona: ' + data.persona + ' | Threshold: ' + data.threshold + '</div>' +
                     '<div style="margin-top:8px;font-size:14px;"><strong>Reason:</strong> ' + overallReason + '</div>' +
@@ -2326,6 +2484,19 @@
         }, { threshold: 0.1 });
         const auditSection = document.getElementById('audit');
         if (auditSection) auditObserver.observe(auditSection);
+
+        // THING 3: Welcome modal — show once per browser session
+        (function() {
+            const overlay = document.getElementById('welcomeOverlay');
+            const dismissBtn = document.getElementById('welcomeDismissBtn');
+            if (!localStorage.getItem('regulens_welcomed')) {
+                overlay.style.display = 'flex';
+            }
+            dismissBtn.addEventListener('click', function() {
+                localStorage.setItem('regulens_welcomed', '1');
+                overlay.style.display = 'none';
+            });
+        })();
     </script>
 </body>
 </html>
