@@ -723,6 +723,12 @@
       from { opacity:0; transform:translateY(12px); }
       to { opacity:1; transform:translateY(0); }
     }
+
+    /* ── SYNTHESIS PANEL ── */
+    @keyframes synthDot {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -926,6 +932,35 @@
       </div>
 
       <div id="response-panel" style="display:none; margin-bottom:2rem;">
+
+        <div id="synthesis-panel" style="display:none; margin-bottom:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span style="font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; color:var(--text-muted);">SYNTHESIZED ANSWER</span>
+              <span id="synthesis-persona-badge" style="font-family:var(--font-mono); font-size:0.7rem; font-weight:bold; padding:0.15rem 0.5rem; border-radius:3px; background:rgba(212,175,55,0.1); color:var(--accent-gold); border:1px solid rgba(212,175,55,0.2);"></span>
+            </div>
+            <span id="synthesis-status" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);"></span>
+          </div>
+          <div id="synthesis-loading" style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; padding:2rem; display:flex; align-items:center; gap:1rem;">
+            <div style="display:flex; gap:4px;">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-gold);animation:synthDot 1.2s infinite ease-in-out;"></div>
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-gold);animation:synthDot 1.2s infinite ease-in-out 0.2s;"></div>
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-gold);animation:synthDot 1.2s infinite ease-in-out 0.4s;"></div>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary);">Agent II synthesizing persona-calibrated response…</span>
+          </div>
+          <div id="synthesis-result" style="display:none; background:var(--card-bg); border:1px solid var(--border-color); border-left:3px solid var(--accent-gold); border-radius:6px; padding:2rem;">
+            <div id="synthesis-text" style="color:var(--text-primary); font-size:0.95rem; line-height:1.8; font-family:var(--font-sans); white-space:pre-wrap;"></div>
+            <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted);">Synthesized from <span id="synthesis-chunk-count"></span> verified sources · claude-sonnet-4-20250514</span>
+              <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted);">⚠ AI-generated · requires human review before compliance use</span>
+            </div>
+          </div>
+          <div id="synthesis-error" style="display:none; background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; padding:1.5rem;">
+            <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted);">Synthesis unavailable — source chunks available below.</span>
+          </div>
+        </div>
+
         <div id="answer-blocks"></div>
         <div style="border-top:1px solid var(--border-color); padding-top:1.5rem; margin-bottom:1.5rem;">
           <span style="font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:2px;">SOURCE VERIFICATION</span>
@@ -1473,6 +1508,8 @@
 
     var overallVerdict = block > 0 ? 'BLOCK' : (flag > 0 ? 'FLAG' : 'PASS');
     appendAuditRow(query, persona, overallVerdict);
+
+    synthesizeAnswer(query, persona, results);
   }
 
   function doFetch(query) {
@@ -1494,6 +1531,7 @@
     btn.disabled = true;
     document.getElementById('cold-start-msg').style.display = 'none';
     document.getElementById('response-panel').style.display = 'none';
+    document.getElementById('synthesis-panel').style.display = 'none';
     document.getElementById('answer-blocks').innerHTML = '';
     clearTimers();
     showLoadingSteps();
@@ -1623,6 +1661,110 @@
       '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
       '<polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
       'Attach document';
+  }
+
+  // ── SYNTHESIS ──
+  async function synthesizeAnswer(query, persona, results) {
+    const panel = document.getElementById('synthesis-panel');
+    const loading = document.getElementById('synthesis-loading');
+    const result = document.getElementById('synthesis-result');
+    const error = document.getElementById('synthesis-error');
+    const badge = document.getElementById('synthesis-persona-badge');
+    const status = document.getElementById('synthesis-status');
+    const chunkCount = document.getElementById('synthesis-chunk-count');
+
+    panel.style.display = 'block';
+    loading.style.display = 'flex';
+    result.style.display = 'none';
+    error.style.display = 'none';
+
+    const personaLabels = {
+      lead_auditor: 'Lead Auditor',
+      ml_engineer: 'ML Engineer',
+      legal_counsel: 'Legal Counsel'
+    };
+    badge.textContent = personaLabels[persona] || persona;
+
+    const usableChunks = results.filter(r => r.verdict !== 'BLOCK');
+    const passChunks = results.filter(r => r.verdict === 'PASS');
+
+    if (usableChunks.length === 0) {
+      loading.style.display = 'none';
+      error.style.display = 'block';
+      error.querySelector('span').textContent =
+        'No verified sources available for synthesis. All chunks blocked by Zero-Trust Critic.';
+      return;
+    }
+
+    const personaInstructions = {
+      lead_auditor: `You are a compliance expert writing for a Lead Auditor conducting AI system audits.
+Use formal, risk-framed language. Lead with the key obligation. Cite specific article numbers.
+Structure: what is required → why it matters → what evidence is needed.
+Threshold applied: 0.96 NLI confidence.`,
+      ml_engineer: `You are a compliance expert writing for an ML Engineer who needs to implement compliance requirements.
+Use technical, implementation-focused language. Translate obligations into concrete engineering tasks.
+Structure: what must be built → specific technical requirements → how to demonstrate compliance.
+Threshold applied: 0.88 NLI confidence.`,
+      legal_counsel: `You are a compliance expert writing for Legal Counsel advising on AI regulatory obligations.
+Use precise legal language. Distinguish mandatory obligations from recommendations.
+Cite article numbers and clause references. Note cross-framework implications.
+Threshold applied: 0.96 NLI confidence.`
+    };
+
+    const instruction = personaInstructions[persona] ||
+      'Provide a clear, accurate compliance answer based on the regulatory sources.';
+
+    const context = usableChunks.map((r, i) =>
+      `[Source ${i+1}: ${r.article_ref} | Confidence: ${r.confidence.toFixed(3)} | Verdict: ${r.verdict}]\n${r.content}`
+    ).join('\n\n---\n\n');
+
+    const systemPrompt = `${instruction}
+
+You are synthesizing a compliance answer from verified regulatory sources retrieved by the ReguLens Zero-Trust Critic.
+Only use information from the provided sources. Do not add information not present in the sources.
+Be direct and specific. Do not hedge excessively. If sources are incomplete, state what is covered and note the gap.
+Keep the answer to 3-5 focused paragraphs.`;
+
+    const userMessage = `Query: ${query}
+
+Verified regulatory sources (${usableChunks.length} chunks, ${passChunks.length} PASS):
+
+${context}
+
+Provide a synthesized compliance answer for a ${personaLabels[persona] || persona}.`;
+
+    try {
+      status.textContent = 'synthesizing…';
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMessage }]
+        })
+      });
+
+      if (!response.ok) throw new Error('API error ' + response.status);
+
+      const data = await response.json();
+      const text = data.content?.[0]?.text || '';
+      if (!text) throw new Error('Empty response');
+
+      loading.style.display = 'none';
+      result.style.display = 'block';
+      document.getElementById('synthesis-text').textContent = text;
+      chunkCount.textContent = usableChunks.length;
+      status.textContent = usableChunks.length + ' sources';
+
+    } catch (err) {
+      console.error('Synthesis error:', err);
+      loading.style.display = 'none';
+      error.style.display = 'block';
+      status.textContent = 'unavailable';
+    }
   }
 
   // ── LOGIN ──
