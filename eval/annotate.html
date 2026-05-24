@@ -41,6 +41,8 @@
   .val-neutral { background: #1f2937; color: #9ca3af; }
   .val-contradict { background: #7f1d1d; color: #fca5a5; }
   .source-span { background: #111827; border-left: 3px solid #374151; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; color: #9ca3af; line-height: 1.5; border-radius: 0 4px 4px 0; }
+  .article-ref { font-size: 11px; font-weight: 600; color: #60a5fa; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+  .chunk-content { background: #111827; border-left: 3px solid #2563eb; padding: 10px 14px; margin-bottom: 12px; font-size: 12.5px; color: #cbd5e1; line-height: 1.7; border-radius: 0 4px 4px 0; max-height: 160px; overflow-y: auto; }
   .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
   .radio-option { cursor: pointer; }
   .radio-option input { display: none; }
@@ -195,9 +197,14 @@ function renderTask(idx) {
     const conf = claim.confidence != null ? (claim.confidence * 100).toFixed(1) + '%' : 'N/A';
     const annotated = ann.human_label ? ' annotated' : '';
 
+    const articleRef = claim.article_ref || claim.article || claim.clause || claim.source_article || '';
+    const chunkContent = claim.content || claim.chunk_content || claim.chunk_text || claim.source_text || '';
+
     html += `
       <div class="claim-card${annotated}" id="card-${taskId}-${claimId}">
         <div class="claim-id">Claim ${ci + 1} / ${claims.length} · ID: ${claimId}</div>
+        ${articleRef ? `<div class="article-ref">${escHtml(articleRef)}</div>` : ''}
+        ${chunkContent ? `<div class="chunk-content">${escHtml(chunkContent)}</div>` : ''}
         <div class="claim-text">${escHtml(claim.claim_text || claim.text || '')}</div>
         <div class="nli-verdict">
           <span class="label">NLI: </span>
