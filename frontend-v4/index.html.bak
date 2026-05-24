@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReguLens — AI Compliance Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f7f5f0;
+  --bg2:      #f0ede6;
+  --bg3:      #ffffff;
+  --surface:  #f4f2ec;
+  --surface2: #ece9e1;
+  --border:   rgba(0,0,0,0.07);
+  --border2:  rgba(0,0,0,0.13);
+  --ink:      #0f0e0c;
+  --ink2:     #4a4840;
+  --ink3:     #9a9690;
+  --accent:   #1a4fd6;
+  --accent2:  #2b5fe8;
+  --accent-bg:#eef2fd;
+  --green:    #127a4c;
+  --green-bg: #e8f5ee;
+  --amber:    #a05a00;
+  --amber-bg: #fdf3e3;
+  --red:      #c0392b;
+  --red-bg:   #fdecea;
+  --shadow:   0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow2:  0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.06);
+  --mono:     'DM Mono', monospace;
+  --sans:     'DM Sans', sans-serif;
+  --display:  'Syne', sans-serif;
+  --r:        10px;
+  --r2:       16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.splash{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;opacity:.35}
+.sp1{width:500px;height:500px;background:#d6e4ff;top:-150px;right:-80px}
+.sp2{width:350px;height:350px;background:#d4eddf;bottom:0;left:-100px}
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:30px;height:calc(100vh - 30px);display:flex;flex-direction:column;background:var(--bg3);border-right:1px solid var(--border);box-shadow:2px 0 12px rgba(0,0,0,0.03)}
+.sb-top{padding:26px 22px 22px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(26,79,214,.3)}
+.logo-mark svg{width:16px;height:16px;color:white}
+.logo-name{font-family:var(--display);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.logo-ver{font-size:10px;font-family:var(--mono);color:var(--ink3);letter-spacing:.06em;margin-left:40px}
+.nav{padding:14px 0;flex:1;overflow-y:auto}
+.nav-sec{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);padding:10px 22px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 22px;font-size:13px;color:var(--ink2);cursor:pointer;transition:all .12s;border-left:2px solid transparent;margin:1px 0}
+.nav-item svg{width:15px;height:15px;opacity:.55;flex-shrink:0}
+.nav-item:hover{color:var(--ink);background:var(--surface)}
+.nav-item.active{color:var(--accent);background:var(--accent-bg);border-left-color:var(--accent);font-weight:500}
+.nav-item.active svg{opacity:1;color:var(--accent)}
+
+/* SIDEBAR STATS */
+.sb-stats{padding:14px 22px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sb-stats-title{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:10px}
+.sb-stat-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sb-stat-row:last-child{margin-bottom:0}
+.sb-stat-lbl{font-size:11px;color:var(--ink3);font-family:var(--mono)}
+.sb-stat-val{font-size:11px;font-family:var(--mono);font-weight:500}
+.sv-green{color:var(--green)}.sv-blue{color:var(--accent)}.sv-amber{color:var(--amber)}
+
+.sb-foot{padding:18px 22px;border-top:1px solid var(--border)}
+.api-row{display:flex;align-items:center;gap:7px;font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.api-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(18,122,76,.5);animation:blink 2.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{position:sticky;top:30px;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 30px;background:rgba(247,245,240,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.tb-title{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink)}
+.chips{display:flex;gap:6px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:20px;border:1px solid}
+.cg{background:var(--green-bg);color:var(--green);border-color:rgba(18,122,76,.2)}
+.cb{background:var(--accent-bg);color:var(--accent);border-color:rgba(26,79,214,.2)}
+.ca{background:var(--amber-bg);color:var(--amber);border-color:rgba(160,90,0,.2)}
+
+/* CONTENT */
+.content{padding:28px 30px;flex:1;display:flex;flex-direction:column;gap:22px;animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION SWITCHING */
+.section{display:none;flex-direction:column;gap:22px}
+.section.active{display:flex}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.stat-card:hover{box-shadow:var(--shadow2);transform:translateY(-1px)}
+.s-lbl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:7px}
+.s-val{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px}
+.s-sub{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.s-sub.up{color:var(--green)}.s-sub.note{color:var(--amber)}
+
+/* TEMPLATES */
+.templates{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tmpl{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--ink2);cursor:pointer;transition:all .13s;white-space:nowrap}
+.tmpl:hover{border-color:rgba(26,79,214,.4);background:var(--accent-bg);color:var(--accent)}
+.tmpl svg{width:10px;height:10px;opacity:.6;flex-shrink:0}
+
+/* QUERY CARD */
+.qcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
+.qhead{padding:18px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.card-lbl{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--ink3)}
+.ptabs{display:flex;gap:3px;background:var(--bg2);padding:3px;border-radius:8px}
+.ptab{padding:5px 11px;font-size:11px;font-family:var(--mono);color:var(--ink3);cursor:pointer;border-radius:6px;border:none;background:none;transition:all .12s}
+.ptab:hover{color:var(--ink2)}
+.ptab.active{background:var(--bg3);color:var(--accent);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.qbody{padding:20px 24px}
+.inp-wrap{position:relative;margin-bottom:12px}
+.qta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 50px 13px 15px;font-size:14px;font-family:var(--sans);color:var(--ink);resize:none;min-height:68px;line-height:1.5;transition:border-color .18s,box-shadow .18s}
+.qta:focus{outline:none;border-color:rgba(26,79,214,.4);box-shadow:0 0 0 3px rgba(26,79,214,.07);background:var(--bg3)}
+.qta::placeholder{color:var(--ink3)}
+.ibtns{position:absolute;right:9px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px}
+.ibtn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);transition:all .12s}
+.ibtn:hover{border-color:var(--border2);color:var(--ink);box-shadow:var(--shadow)}
+.ibtn svg{width:14px;height:14px}
+.ibtn.rec{border-color:rgba(192,57,43,.35);background:var(--red-bg);color:var(--red);animation:pr 1.1s infinite}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.2)}50%{box-shadow:0 0 0 5px rgba(192,57,43,.05)}}
+.qfoot{display:flex;align-items:center;justify-content:space-between}
+.uplbl{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink3);cursor:pointer;padding:7px 12px;border:1.5px dashed var(--border2);border-radius:8px;transition:all .18s}
+.uplbl svg{width:13px;height:13px;flex-shrink:0}
+.uplbl:hover{border-color:rgba(26,79,214,.4);color:var(--accent);background:var(--accent-bg)}
+input[type=file]{display:none}
+.ftag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:4px 9px;border-radius:20px}
+.ftx{cursor:pointer;opacity:.55}.ftx:hover{opacity:1}
+.run-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-family:var(--display);font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(26,79,214,.25);transition:all .15s}
+.run-btn:hover{background:#1440b8;box-shadow:0 4px 18px rgba(26,79,214,.35);transform:translateY(-1px)}
+.run-btn:active{transform:translateY(0)}
+.run-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.run-btn svg{width:13px;height:13px}
+
+/* WAVE */
+.wave-row{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--red-bg);border:1px solid rgba(192,57,43,.18);border-radius:8px;margin-bottom:12px;font-size:12px;font-family:var(--mono);color:var(--red)}
+.wave-row.show{display:flex}
+.bars{display:flex;align-items:center;gap:2px;height:18px}
+.bar{width:2px;background:var(--red);border-radius:2px;animation:wv .5s ease-in-out infinite}
+.bar:nth-child(1){height:5px;animation-delay:0s}.bar:nth-child(2){height:13px;animation-delay:.08s}.bar:nth-child(3){height:9px;animation-delay:.16s}.bar:nth-child(4){height:17px;animation-delay:.24s}.bar:nth-child(5){height:7px;animation-delay:.32s}.bar:nth-child(6){height:14px;animation-delay:.16s}.bar:nth-child(7){height:5px;animation-delay:.08s}
+@keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1.6)}}
+
+/* LOADING */
+.load-state{display:none;flex-direction:column;gap:8px;padding:18px 0 6px}
+.load-state.show{display:flex}
+.ltrack{height:2px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.lbar{height:100%;background:linear-gradient(90deg,var(--accent),#7ba7ff);border-radius:2px;width:0%;transition:width 1.5s ease}
+.lstep{display:flex;align-items:center;gap:9px;font-size:12px;font-family:var(--mono);color:var(--ink3);opacity:0;animation:sIn .25s ease forwards}
+.lstep:nth-child(2){animation-delay:.1s}.lstep:nth-child(3){animation-delay:.5s}.lstep:nth-child(4){animation-delay:.9s}
+@keyframes sIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink .9s infinite}
+.lstep:nth-child(3) .ldot{animation-delay:.4s}.lstep:nth-child(4) .ldot{animation-delay:.8s}
+
+/* ERROR */
+.err-box{display:none;margin-top:14px;padding:14px 16px;background:var(--red-bg);border:1px solid rgba(192,57,43,.2);border-radius:var(--r);font-size:12px;font-family:var(--mono);color:var(--red)}
+.err-box.show{display:block}
+
+/* RESULT */
+.result{display:none;margin-top:18px;border-top:1px solid var(--border);padding-top:18px;animation:rise .3s ease}
+.result.show{display:block}
+.res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.verdict{display:inline-flex;align-items:center;gap:7px;font-family:var(--display);font-size:12px;font-weight:700;padding:5px 13px;border-radius:20px;letter-spacing:.04em;border:1px solid}
+.vpass{background:var(--green-bg);color:var(--green);border-color:rgba(18,122,76,.25)}
+.vpart{background:var(--amber-bg);color:var(--amber);border-color:rgba(160,90,0,.25)}
+.vgap{background:var(--red-bg);color:var(--red);border-color:rgba(192,57,43,.25)}
+.verdict svg{width:12px;height:12px}
+.res-meta{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.agents{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.abox{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:var(--r);padding:12px 14px;transition:box-shadow .2s}
+.abox:hover{box-shadow:var(--shadow)}
+.ag-num{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:4px}
+.ag-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.ag-stat{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.ag-hi{color:var(--accent)}
+.ans-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;font-size:13.5px;line-height:1.78;color:var(--ink)}
+.ans-box strong{font-weight:500;color:var(--ink)}
+.cite{display:inline-flex;align-items:center;font-family:var(--mono);font-size:10.5px;background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:1px 6px;border-radius:4px;margin:0 2px}
+
+/* AUDIT */
+.audit-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
+.audit-head{padding:16px 22px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between}
+.chain-ok{display:flex;align-items:center;gap:7px;font-size:11px;font-family:var(--mono);color:var(--green)}
+.chain-ok svg{width:13px;height:13px}
+table.atbl{width:100%;border-collapse:collapse;font-size:12px}
+.atbl th{text-align:left;padding:9px 16px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:1px solid var(--border);background:var(--surface);font-weight:400}
+.atbl td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+.atbl tr:last-child td{border-bottom:none}
+.atbl tr:hover td{background:var(--surface)}
+.hash{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+
+/* CORPUS */
+.corpus-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;box-shadow:var(--shadow)}
+.corpus-list{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.ci-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ci-name{font-size:13px;color:var(--ink)}
+.ci-cnt{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.track{height:4px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.fill{height:100%;border-radius:4px;transition:width 1.2s ease}
+.fb{background:var(--accent)}.fg{background:var(--green)}.fa{background:#d4840a}
+
+/* OBSERVABILITY */
+.obs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.obs-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;box-shadow:var(--shadow)}
+.obs-card-full{grid-column:1/-1}
+.obs-title{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:14px}
+.obs-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.obs-stat{padding:12px 14px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border)}
+.obs-stat-val{font-family:var(--display);font-size:22px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:3px}
+.obs-stat-lbl{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+.trace-list{display:flex;flex-direction:column;gap:8px}
+.trace-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border);font-size:12px;font-family:var(--mono)}
+.trace-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.td-pass{background:var(--green)}.td-part{background:var(--amber)}.td-fail{background:var(--red)}
+.trace-q{flex:1;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trace-ms{color:var(--ink3);font-size:11px}
+.opik-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:5px 11px;border-radius:20px;background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent)}
+
+/* ARCHITECTURE */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.arch-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:22px 24px;box-shadow:var(--shadow)}
+.arch-card-full{grid-column:1/-1}
+.arch-title{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:16px}
+.arch-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.arch-tbl th{text-align:left;padding:7px 12px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:1px solid var(--border);font-weight:400}
+.arch-tbl td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+.arch-tbl tr:last-child td{border-bottom:none}
+.arch-layer{font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;padding-right:14px!important}
+/* Pipeline */
+.pipeline{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.pipe-node{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex:1;min-width:110px}
+.pipe-node.pipe-end{flex:0.7;border-color:var(--border2)}
+.pipe-tag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:4px}
+.pipe-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.pipe-lbl{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.pipe-icon{font-size:18px;margin-bottom:4px}
+.pipe-desc{font-size:10px;font-family:var(--mono);color:var(--ink3);line-height:1.5}
+.pipe-a1{border-top:2px solid var(--accent)}.pipe-a2{border-top:2px solid var(--green)}.pipe-a3{border-top:2px solid var(--amber)}
+.pipe-arrow{font-size:20px;color:var(--ink3);align-self:center;flex-shrink:0;padding-top:4px}
+/* Score journey */
+.score-journey{display:flex;flex-direction:column;gap:10px}
+.sj-step{display:grid;grid-template-columns:58px 1fr 260px;gap:12px;align-items:center}
+.sj-score{font-family:var(--display);font-size:14px;font-weight:700;color:var(--ink2);text-align:right}
+.sj-bar{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.sj-fill{height:100%;background:var(--accent);border-radius:4px}
+.sj-fill-win{background:var(--green)}
+.sj-lbl{font-size:11px;font-family:var(--mono);color:var(--ink3)}
+.sj-win .sj-score{color:var(--green)}.sj-win .sj-lbl{color:var(--ink2);font-weight:500}
+/* Instruction box */
+.instr-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:var(--r);padding:14px 16px;font-size:11.5px;font-family:var(--mono);color:var(--ink2);line-height:1.75;white-space:pre-wrap}
+/* Deployment flow */
+.deploy-flow{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.df-node{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;min-width:80px}
+.df-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.df-user{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.2)}
+.df-gh{background:var(--surface);color:var(--ink2);border:1px solid var(--border2)}
+.df-render{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.2)}
+.df-neon{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,90,0,.2)}
+.df-groq{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2)}
+.df-opik{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.15)}
+.df-lbl{font-size:12px;font-weight:500;color:var(--ink);text-align:center}
+.df-sub{font-size:10px;font-family:var(--mono);color:var(--ink3);text-align:center;line-height:1.4}
+.df-arr{font-size:18px;color:var(--border2);flex-shrink:0}
+
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px}
+
+/* TOOLTIPS on agent boxes */
+.abox{position:relative}
+.abox[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:10px;font-family:var(--mono);padding:6px 10px;border-radius:7px;white-space:normal;text-align:center;line-height:1.5;max-width:220px;pointer-events:none;opacity:0;transition:opacity .18s;z-index:200}
+.abox[data-tip]::before{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);pointer-events:none;opacity:0;transition:opacity .18s;z-index:200}
+.abox[data-tip]:hover::after,.abox[data-tip]:hover::before{opacity:1}
+
+/* SCROLL FADE-IN for section cards */
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* RESULT slide-up entrance */
+.result.show{display:block;animation:slideUp .42s cubic-bezier(.22,.68,0,1.2)}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Self-Improving Pipeline flow */
+.si-flow{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;flex-wrap:wrap;margin-top:6px}
+.si-node{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:78px}
+.si-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);font-weight:700;flex-shrink:0}
+.si-api{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(26,79,214,.2)}
+.si-db{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,90,0,.2)}
+.si-cron{background:var(--surface);color:var(--ink2);border:1px solid var(--border2);font-size:18px}
+.si-dspy{background:#f3eeff;color:#5b21b6;border:1px solid rgba(91,33,182,.18)}
+.si-gate{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.2);font-size:17px}
+.si-deploy{background:var(--green-bg);color:var(--green);border:1px solid rgba(18,122,76,.25);font-size:19px}
+.si-lbl{font-size:11.5px;font-weight:600;color:var(--ink);text-align:center;line-height:1.3}
+.si-sub{font-size:9.5px;font-family:var(--mono);color:var(--ink3);text-align:center;line-height:1.45}
+.si-arr{font-size:18px;color:var(--border2);flex-shrink:0;padding-top:11px}
+.si-win .si-lbl{color:var(--green)}
+.si-note{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.si-note-item{font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6}
+</style>
+<!-- SimpleAnalytics — privacy-first, no cookies, GDPR compliant -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
+<!-- jsPDF — client-side audit trail PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<!-- DISCLAIMER BANNER -->
+<div id="disclaimerBanner" style="position:fixed;top:0;left:0;right:0;z-index:10000;background:#d97706;color:#fff;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;text-align:center;padding:7px 40px 7px 16px;line-height:1.4;">
+  ⚠ Academic Prototype — Outputs are AI-generated and require human review before use in any compliance decision.
+  <button onclick="document.getElementById('disclaimerBanner').style.display='none';document.querySelector('.topbar').style.top='0';document.querySelector('.sidebar').style.top='0';document.querySelector('.sidebar').style.height='100vh';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.2);border:none;color:#fff;border-radius:3px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;">✕</button>
+</div>
+<div class="splash sp1"></div>
+<div class="splash sp2"></div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7l9 5 9-5-9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg>
+        </div>
+        <span class="logo-name">ReguLens</span>
+      </div>
+      <div class="logo-ver">v3.2 · Enterprise</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Platform</div>
+      <div class="nav-item active" data-section="query" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Query
+      </div>
+      <div class="nav-item" data-section="audit" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Audit trail
+      </div>
+      <div class="nav-item" data-section="corpus" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Corpus
+      </div>
+      <div class="nav-item" data-section="observability" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Observability
+      </div>
+      <div class="nav-item" data-section="architecture" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg>Architecture
+      </div>
+      <div class="nav-sec" style="margin-top:10px">Frameworks</div>
+      <div class="nav-item" data-section="query" data-template="What are the prohibited AI practices under EU AI Act Article 5 and what penalties apply?" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><path d="M2 12h20"/></svg>EU AI Act
+      </div>
+      <div class="nav-item" data-section="query" data-template="How does the NIST AI RMF GOVERN function apply to my organisation's AI risk management?" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>NIST AI RMF
+      </div>
+      <div class="nav-item" data-section="query" data-template="What does ISO 42001 Clause 6 require for AI risk treatment and performance evaluation?" onclick="setNav(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>ISO 42001
+      </div>
+    </nav>
+
+    <div class="sb-stats">
+      <div class="sb-stats-title">Platform stats</div>
+      <div class="sb-stat-row">
+        <span class="sb-stat-lbl">Benchmark</span>
+        <span class="sb-stat-val sv-green">100%</span>
+      </div>
+      <div class="sb-stat-row">
+        <span class="sb-stat-lbl">DSPy MIPROv2</span>
+        <span class="sb-stat-val sv-blue">11 trials</span>
+      </div>
+      <div class="sb-stat-row">
+        <span class="sb-stat-lbl">Corpus chunks</span>
+        <span class="sb-stat-val sv-blue">347</span>
+      </div>
+      <div class="sb-stat-row">
+        <span class="sb-stat-lbl">SHA-256 chain</span>
+        <span class="sb-stat-val sv-green">Valid</span>
+      </div>
+      <div class="sb-stat-row">
+        <span class="sb-stat-lbl">Opik traces</span>
+        <span class="sb-stat-val sv-amber">Live</span>
+      </div>
+    </div>
+
+    <div class="sb-foot">
+      <div class="api-row"><div class="api-dot"></div>API live · Render</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="tb-title" id="page-title">Compliance Query</div>
+      <div class="chips">
+        <span class="chip cg">100% benchmark</span>
+        <span class="chip cb">347 chunks</span>
+        <span class="chip cb">104 audit events</span>
+        <span class="chip ca">DSPy MIPROv2</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- QUERY SECTION -->
+      <div class="section active" id="section-query">
+        <div class="stats-row">
+          <div class="stat-card"><div class="s-lbl">Queries today</div><div class="s-val" id="q-count" data-target="27" data-suffix="">27</div><div class="s-sub up">↑ 12 vs yesterday</div></div>
+          <div class="stat-card"><div class="s-lbl">Avg confidence</div><div class="s-val" data-target="0.92" data-decimals="2" data-suffix="">0.92</div><div class="s-sub up">Above all thresholds</div></div>
+          <div class="stat-card"><div class="s-lbl">Chain integrity</div><div class="s-val">Valid</div><div class="s-sub">104 events · 0 breaks</div></div>
+          <div class="stat-card"><div class="s-lbl">DSPy score</div><div class="s-val" data-target="100" data-suffix="%">100%</div><div class="s-sub note">MIPROv2 · 11 trials</div></div>
+        </div>
+
+        <div class="qcard">
+          <div class="qhead">
+            <div class="card-lbl">Run a compliance query</div>
+            <div class="ptabs">
+              <button class="ptab active" onclick="setPersona(this,'lead_auditor')">Auditor</button>
+              <button class="ptab" onclick="setPersona(this,'legal_counsel')">Legal</button>
+              <button class="ptab" onclick="setPersona(this,'ml_engineer')">Engineer</button>
+            </div>
+          </div>
+          <div class="qbody">
+            <div class="inp-wrap">
+              <textarea class="qta" id="qtext" rows="2" placeholder="Ask about EU AI Act, NIST AI RMF, or ISO 42001…">What does EU AI Act Article 9 require for high-risk AI systems?</textarea>
+              <div class="ibtns">
+                <button class="ibtn" id="mic-btn" title="Voice input" onclick="toggleMic()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="templates" id="templates">
+              <button class="tmpl" onclick="fillTemplate('What does EU AI Act Article 9 require for high-risk AI systems?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Art. 9 high-risk
+              </button>
+              <button class="tmpl" onclick="fillTemplate('What are the prohibited AI practices under EU AI Act Article 5?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Art. 5 prohibitions
+              </button>
+              <button class="tmpl" onclick="fillTemplate('How does NIST AI RMF GOVERN function apply to AI risk management?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                NIST GOVERN
+              </button>
+              <button class="tmpl" onclick="fillTemplate('What human oversight controls does ISO 42001 Clause 6 require?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                ISO 42001 Cl. 6
+              </button>
+              <button class="tmpl" onclick="fillTemplate('What transparency obligations apply under EU AI Act Articles 13 and 14?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Transparency Art. 13–14
+              </button>
+            </div>
+
+            <div class="wave-row" id="wave-row">
+              <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+              Listening…
+            </div>
+
+            <div class="qfoot">
+              <label class="uplbl" for="file-in" id="uplbl">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload document for analysis
+              </label>
+              <input type="file" id="file-in" accept=".pdf,.txt,.docx" onchange="handleFile(this)">
+              <button class="run-btn" id="run-btn" onclick="runQuery()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Run query
+              </button>
+            </div>
+
+            <div class="load-state" id="loading">
+              <div class="ltrack"><div class="lbar" id="lbar"></div></div>
+              <div class="lstep"><div class="ldot"></div>Agent I — retrieving corpus chunks…</div>
+              <div class="lstep"><div class="ldot"></div>Agent II — synthesising persona-calibrated response…</div>
+              <div class="lstep"><div class="ldot"></div>Agent III — verifying claims against regulatory text…</div>
+            </div>
+
+            <div class="err-box" id="err-box"></div>
+
+            <div class="result" id="result">
+              <div class="res-head">
+                <div class="verdict vpass" id="verdict">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span id="v-lbl">PASS</span>
+                </div>
+                <div class="res-meta" id="res-meta">Confidence 0.96 · lead_auditor threshold met</div>
+              </div>
+              <div class="agents">
+                <div class="abox" data-tip="pgvector cosine similarity · Neon PostgreSQL · top 5 chunks · threshold ≥ 0.45"><div class="ag-num">Agent I</div><div class="ag-name">Horizon Ingestion</div><div class="ag-stat">chunks retrieved · top sim <span class="ag-hi" id="sim-val">—</span></div></div>
+                <div class="abox" data-tip="Groq Llama 3.3 70B · MIPROv2 Instruction 2 · persona-calibrated synthesis"><div class="ag-num">Agent II</div><div class="ag-name">Persona Synthesis</div><div class="ag-stat">Groq · <span class="ag-hi">Llama 3.3 70B</span></div></div>
+                <div class="abox" data-tip="Claim-level NLI · PASS / FLAG / GAP_REPORT routing · SHA-256 audit log · DeBERTa-v3"><div class="ag-num">Agent III</div><div class="ag-name">Zero-Trust Critic</div><div class="ag-stat"><span class="ag-hi" id="claims-val">—</span> claims verified · DeBERTa</div></div>
+              </div>
+              <div class="ans-box" id="ans-box"></div>
+              <div style="margin-top:12px;text-align:right;">
+                <button id="export-pdf-btn" onclick="exportAuditPDF()" style="display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;" onmouseover="this.style.background='var(--accent-bg)';this.style.borderColor='rgba(26,79,214,.3)';this.style.color='var(--accent)'" onmouseout="this.style.background='var(--surface2)';this.style.borderColor='var(--border2)';this.style.color='var(--ink2)'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  Export Audit Trail PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT SECTION -->
+      <div class="section" id="section-audit">
+        <div class="audit-card">
+          <div class="audit-head">
+            <div class="card-lbl">Audit trail</div>
+            <div class="chain-ok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              SHA-256 chain valid · 104 events · 0 breaks
+            </div>
+          </div>
+          <table class="atbl">
+            <thead><tr><th>Timestamp</th><th>Query</th><th>Persona</th><th>Verdict</th><th>Hash</th></tr></thead>
+            <tbody id="audit-body">
+              <tr><td class="hash" style="color:var(--ink3)">2026-05-18 15:42</td><td>EU AI Act Article 9 — high-risk systems</td><td><span class="chip cb">lead_auditor</span></td><td><span class="chip cg">PASS</span></td><td class="hash">a3f9b2…e8d4</td></tr>
+              <tr><td class="hash" style="color:var(--ink3)">2026-05-18 15:38</td><td>NIST RMF GOVERN — ISO 42001 Clause 6</td><td><span class="chip cb">legal_counsel</span></td><td><span class="chip cg">PASS</span></td><td class="hash">d7c4a1…f29b</td></tr>
+              <tr><td class="hash" style="color:var(--ink3)">2026-05-18 15:31</td><td>Prohibited practices under Article 5</td><td><span class="chip ca">ml_engineer</span></td><td><span class="chip cg">PASS</span></td><td class="hash">f2e8c3…91a7</td></tr>
+              <tr><td class="hash" style="color:var(--ink3)">2026-05-18 15:24</td><td>ISO 42001 human oversight controls</td><td><span class="chip cb">lead_auditor</span></td><td><span class="chip ca">PARTIAL</span></td><td class="hash">b9d1f7…4501</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CORPUS SECTION -->
+      <div class="section" id="section-corpus">
+        <div class="corpus-card">
+          <div class="card-lbl">Corpus coverage</div>
+          <div class="corpus-list">
+            <div><div class="ci-top"><span class="ci-name">EU AI Act (2024/1689)</span><span class="ci-cnt">161 chunks</span></div><div class="track"><div class="fill fb" data-to="46" style="width:0%"></div></div></div>
+            <div><div class="ci-top"><span class="ci-name">NIST AI RMF 1.0 + Playbook</span><span class="ci-cnt">136 chunks</span></div><div class="track"><div class="fill fg" data-to="39" style="width:0%"></div></div></div>
+            <div><div class="ci-top"><span class="ci-name">ISO/IEC 42001:2023</span><span class="ci-cnt">50 chunks</span></div><div class="track"><div class="fill fa" data-to="15" style="width:0%"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OBSERVABILITY SECTION -->
+      <div class="section" id="section-observability">
+        <div class="obs-grid">
+          <div class="obs-card obs-card-full">
+            <div class="obs-title">Opik / Comet observability</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+              <span class="opik-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Opik traces live
+              </span>
+              <span class="chip cg">project: regulens</span>
+            </div>
+            <div class="obs-stat-grid">
+              <div class="obs-stat"><div class="obs-stat-val">347</div><div class="obs-stat-lbl">Corpus chunks</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">104</div><div class="obs-stat-lbl">Audit events</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">100%</div><div class="obs-stat-lbl">DSPy MIPROv2 score</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">0.92</div><div class="obs-stat-lbl">Avg confidence</div></div>
+            </div>
+          </div>
+          <div class="obs-card obs-card-full">
+            <div class="obs-title">Recent traces</div>
+            <div class="trace-list">
+              <div class="trace-row"><div class="trace-dot td-pass"></div><span class="trace-q">EU AI Act Article 9 — high-risk systems</span><span class="trace-ms">lead_auditor · 580ms</span></div>
+              <div class="trace-row"><div class="trace-dot td-pass"></div><span class="trace-q">NIST RMF GOVERN — ISO 42001 Clause 6</span><span class="trace-ms">legal_counsel · 620ms</span></div>
+              <div class="trace-row"><div class="trace-dot td-pass"></div><span class="trace-q">Prohibited practices under Article 5</span><span class="trace-ms">ml_engineer · 540ms</span></div>
+              <div class="trace-row"><div class="trace-dot td-part"></div><span class="trace-q">ISO 42001 human oversight controls</span><span class="trace-ms">lead_auditor · 710ms</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARCHITECTURE SECTION -->
+      <div class="section" id="section-architecture">
+
+        <!-- Pipeline flow -->
+        <div class="arch-card">
+          <div class="arch-title">Tri-Agent Pipeline</div>
+          <div class="pipeline">
+            <div class="pipe-node pipe-end">
+              <div class="pipe-icon">👤</div>
+              <div class="pipe-lbl">User Query</div>
+              <div class="pipe-desc">Natural language compliance question</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a1">
+              <div class="pipe-tag">Agent I</div>
+              <div class="pipe-name">Horizon Ingestion</div>
+              <div class="pipe-desc">pgvector cosine sim · top 5 chunks · threshold ≥ 0.45 · Neon</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a2">
+              <div class="pipe-tag">Agent II</div>
+              <div class="pipe-name">Persona Synthesis</div>
+              <div class="pipe-desc">Groq Llama 3.3 70B · Instruction 2 · MIPROv2 optimised</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-a3">
+              <div class="pipe-tag">Agent III</div>
+              <div class="pipe-name">Zero-Trust Critic</div>
+              <div class="pipe-desc">Claim-level NLI · PASS / FLAG / GAP_REPORT routing</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node pipe-end">
+              <div class="pipe-icon">🔐</div>
+              <div class="pipe-lbl">Audit Log</div>
+              <div class="pipe-desc">SHA-256 hash chain · Neon PostgreSQL · Opik trace</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-grid">
+
+          <!-- Tech Stack -->
+          <div class="arch-card">
+            <div class="arch-title">Tech Stack</div>
+            <table class="arch-tbl">
+              <tr><td class="arch-layer">Backend</td><td>FastAPI on Render (free tier)</td></tr>
+              <tr><td class="arch-layer">Database</td><td>Neon PostgreSQL + pgvector</td></tr>
+              <tr><td class="arch-layer">LLM</td><td>Groq Llama 3.3 70B (free tier)</td></tr>
+              <tr><td class="arch-layer">Frontend</td><td>GitHub Pages (static HTML)</td></tr>
+              <tr><td class="arch-layer">Orchestration</td><td>LangGraph StateGraph (7 nodes)</td></tr>
+              <tr><td class="arch-layer">Observability</td><td>Opik / Comet · project: regulens</td></tr>
+              <tr><td class="arch-layer">Prompt Opt.</td><td>DSPy MIPROv2 · 11 trials · 15 examples</td></tr>
+              <tr><td class="arch-layer">Embeddings</td><td>nomic-embed-text (Ollama) / pgvector</td></tr>
+            </table>
+          </div>
+
+          <!-- Persona System -->
+          <div class="arch-card">
+            <div class="arch-title">Persona System</div>
+            <table class="arch-tbl">
+              <thead><tr><th>Persona</th><th>Threshold</th><th>Focus</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="arch-layer">lead_auditor</td>
+                  <td><span class="chip cg">0.96</span></td>
+                  <td style="font-size:11px">Risk classification, compliance findings, penalties</td>
+                </tr>
+                <tr>
+                  <td class="arch-layer">legal_counsel</td>
+                  <td><span class="chip cg">0.96</span></td>
+                  <td style="font-size:11px">Statutory basis, enforcement exposure, article citations</td>
+                </tr>
+                <tr>
+                  <td class="arch-layer">ml_engineer</td>
+                  <td><span class="chip cb">0.88</span></td>
+                  <td style="font-size:11px">Technical implementation, MLOps controls, logging</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:12px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              Routing: &lt;30% fail → RESPOND · 30–50% → RETRY_RETRIEVE · &gt;50% → GAP_REPORT
+            </div>
+          </div>
+
+          <!-- DSPy Journey — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">DSPy MIPROv2 Optimization Journey · 42.5% → 100.0%</div>
+            <div class="score-journey">
+              <div class="sj-step">
+                <div class="sj-score">42.5%</div>
+                <div class="sj-bar"><div class="sj-fill" data-to="42.5" style="width:0%"></div></div>
+                <div class="sj-lbl">v1 · empty context · Groq 100k TPD exhausted, trials 2–10 zeroed</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">83.33%</div>
+                <div class="sj-bar"><div class="sj-fill" data-to="83.33" style="width:0%"></div></div>
+                <div class="sj-lbl">v2 · metric fix → keyword-based scoring of prediction.answer</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">88.89%</div>
+                <div class="sj-bar"><div class="sj-fill" data-to="88.89" style="width:0%"></div></div>
+                <div class="sj-lbl">v3 · 15 examples · ISO 42001 corpus added · 50 new chunks</div>
+              </div>
+              <div class="sj-step">
+                <div class="sj-score">97.22%</div>
+                <div class="sj-bar"><div class="sj-fill" data-to="97.22" style="width:0%"></div></div>
+                <div class="sj-lbl">v4 · real Neon context prefetch via _prefetch_contexts() · grounded vocabulary</div>
+              </div>
+              <div class="sj-step sj-win">
+                <div class="sj-score">100.0%</div>
+                <div class="sj-bar"><div class="sj-fill sj-fill-win" data-to="100" style="width:0%"></div></div>
+                <div class="sj-lbl">v5 · Article 5 retrieval fix · 1061-char summary chunk added · sim=0.9955 · default program 100%, 8/11 trials 100% ✓</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;font-size:11px;font-family:var(--mono);color:var(--ink3)">
+              Winner: Instruction 0 + Few-Shot Set 5 · Root cause: original 4519-char Article 5 chunk embedded on first 512 chars only — "unacceptable risk" vocabulary never surfaced
+            </div>
+          </div>
+
+          <!-- SHA-256 Hash Chain -->
+          <div class="arch-card">
+            <div class="arch-title">SHA-256 Immutable Audit Chain</div>
+            <div style="font-size:12.5px;color:var(--ink2);line-height:1.75;margin-bottom:14px">
+              Every query creates an immutable audit event. Each event's SHA-256 hash is computed over
+              <code style="font-family:var(--mono);font-size:11px;background:var(--surface);padding:1px 5px;border-radius:4px">event_data + prev_hash</code>,
+              forming a tamper-evident chain. Any modification breaks all subsequent hashes.
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:11px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:3px 9px;border-radius:6px;white-space:nowrap">event_1</span>
+                <span style="color:var(--ink3)">SHA-256(data + "genesis") → <strong style="color:var(--ink)">a3f9b2…e8d4</strong></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="background:var(--accent-bg);border:1px solid rgba(26,79,214,.2);color:var(--accent);padding:3px 9px;border-radius:6px;white-space:nowrap">event_2</span>
+                <span style="color:var(--ink3)">SHA-256(data + a3f9b2…) → <strong style="color:var(--ink)">d7c4a1…f29b</strong></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--green);flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="color:var(--green)">104 events · 0 breaks · chain_valid: true · GET /api/audit/verify</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Winning Instruction 2 -->
+          <div class="arch-card">
+            <div class="arch-title">Winning MIPROv2 Instruction (Live in Pipeline)</div>
+            <div class="instr-box">You are an AI compliance specialist. Analyze the given regulatory context and question. Provide a structured answer with:
+1. Relevant article references from the context
+2. Key compliance requirements
+3. Practical implementation guidance
+Be precise, cite specific articles, and focus on actionable compliance steps.</div>
+            <div style="margin-top:10px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              Source: DSPy MIPROv2 Instruction 2 · Active in pipeline.py _call_groq system prompt<br>
+              Persona confidence gates: lead_auditor/legal_counsel 0.96 · ml_engineer 0.88
+            </div>
+          </div>
+
+          <!-- Opik Observability -->
+          <div class="arch-card">
+            <div class="arch-title">Opik Observability</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+              <span class="opik-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Live traces
+              </span>
+              <span class="chip cg">project: regulens</span>
+            </div>
+            <div class="obs-stat-grid">
+              <div class="obs-stat"><div class="obs-stat-val">27+</div><div class="obs-stat-lbl">Opik traces</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">104</div><div class="obs-stat-lbl">Audit events</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">1.0</div><div class="obs-stat-lbl">Result count score</div></div>
+              <div class="obs-stat"><div class="obs-stat-val">0.92</div><div class="obs-stat-lbl">Avg confidence</div></div>
+            </div>
+            <div style="margin-top:12px;font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6">
+              @opik_track on: _embed · _search · _call_groq<br>
+              track_langgraph(compiled) · ClaimAccuracyMetric · ThresholdComplianceMetric<br>
+              DSPy + Opik eval: verdict_accuracy=0.9 · avg_confidence=0.9176
+            </div>
+          </div>
+
+          <!-- Deployment Architecture — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">Deployment Architecture</div>
+            <div class="deploy-flow">
+              <div class="df-node">
+                <div class="df-icon df-user">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="df-lbl">User</div>
+                <div class="df-sub">Browser<br>Any device</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-gh">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77A5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </div>
+                <div class="df-lbl">GitHub Pages</div>
+                <div class="df-sub">Static HTML<br>frontend-v3/</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-render">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div class="df-lbl">Render</div>
+                <div class="df-sub">FastAPI<br>LangGraph</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-neon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                </div>
+                <div class="df-lbl">Neon</div>
+                <div class="df-sub">PostgreSQL<br>pgvector · 347 chunks</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-groq">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/></svg>
+                </div>
+                <div class="df-lbl">Groq</div>
+                <div class="df-sub">Llama 3.3 70B<br>free tier</div>
+              </div>
+              <div class="df-arr">→</div>
+              <div class="df-node">
+                <div class="df-icon df-opik">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="df-lbl">Opik</div>
+                <div class="df-sub">Traces · Evals<br>app.comet.com</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Self-Improving Pipeline — full width -->
+          <div class="arch-card arch-card-full">
+            <div class="arch-title">Self-Improving Pipeline · Weekly MIPROv2 Retrain</div>
+            <div class="si-flow">
+              <div class="si-node">
+                <div class="si-icon si-api">v2</div>
+                <div class="si-lbl">/api/v2/query</div>
+                <div class="si-sub">conf &lt; threshold<br>OR verdict ≠ PASS</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-db">DB</div>
+                <div class="si-lbl">feedback_events</div>
+                <div class="si-sub">Neon · query, persona<br>confidence · verdict</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-cron">⏰</div>
+                <div class="si-lbl">GitHub Actions</div>
+                <div class="si-sub">Monday 00:00 UTC<br>weekly_retrain.yml</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-dspy">DSPy</div>
+                <div class="si-lbl">MIPROv2 · DeepSeek</div>
+                <div class="si-sub">feedback + benchmarks<br>src/retrain.py</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node">
+                <div class="si-icon si-gate">≥</div>
+                <div class="si-lbl">Quality Gate</div>
+                <div class="si-sub">new_score ≥ current<br>prevents regression</div>
+              </div>
+              <div class="si-arr">→</div>
+              <div class="si-node si-win">
+                <div class="si-icon si-deploy">🚀</div>
+                <div class="si-lbl">Auto-Deploy</div>
+                <div class="si-sub">git push → Render<br>optimized_synthesizer.json</div>
+              </div>
+            </div>
+            <div class="si-note">
+              <div class="si-note-item"><strong style="color:var(--ink)">Trigger:</strong> avg_confidence &lt; persona_threshold OR overall_verdict ≠ PASS</div>
+              <div class="si-note-item"><strong style="color:var(--green)">Gate PASS</strong> → commit JSON · mark events used · Render autodeploys</div>
+              <div class="si-note-item"><strong style="color:var(--red)">Gate FAIL</strong> → keep existing synthesizer · no commit · no regression</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const API_BASE = 'https://regulens-api-bnlw.onrender.com';
+let persona = 'lead_auditor', isRec = false, recognition = null, qCount = 27;
+let lastQueryResult = null;
+
+const SECTION_TITLES = {
+  query: 'Compliance Query',
+  audit: 'Audit Trail',
+  corpus: 'Corpus',
+  observability: 'Observability',
+  architecture: 'Architecture'
+};
+
+function renderMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/^#{1,3}\s+(.+)$/gm, '<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/gs, '<em>$1</em>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+function setNav(el) {
+  const sectionId = el.dataset.section;
+  const template = el.dataset.template;
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('section-' + sectionId);
+  if (target) target.classList.add('active');
+
+  document.getElementById('page-title').textContent = SECTION_TITLES[sectionId] || sectionId;
+
+  if (template) {
+    document.getElementById('qtext').value = template;
+  }
+
+  // Animate bars when section becomes visible
+  if (sectionId === 'corpus') {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateBars('.fill[data-to]')));
+  }
+  if (sectionId === 'architecture') {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateBars('.sj-fill[data-to]')));
+  }
+}
+
+function setPersona(btn, p) {
+  persona = p;
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function fillTemplate(text) {
+  document.getElementById('qtext').value = text;
+  document.getElementById('qtext').focus();
+}
+
+async function runQuery() {
+  const question = document.getElementById('qtext').value.trim();
+  if (!question) return;
+  if (typeof sa_event !== 'undefined') sa_event('query_submit', { persona });
+
+  const loading = document.getElementById('loading');
+  const result = document.getElementById('result');
+  const errBox = document.getElementById('err-box');
+  const bar = document.getElementById('lbar');
+  const btn = document.getElementById('run-btn');
+
+  result.classList.remove('show');
+  errBox.classList.remove('show');
+  loading.classList.add('show');
+  btn.disabled = true;
+  bar.style.width = '0%';
+  setTimeout(() => { bar.style.width = '65%'; }, 50);
+
+  const t0 = Date.now();
+
+  try {
+    const res = await fetch(API_BASE + '/api/v2/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: question, persona })
+    });
+
+    bar.style.width = '100%';
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => res.statusText);
+      throw new Error('API ' + res.status + ': ' + errText.substring(0, 120));
+    }
+
+    const data = await res.json();
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
+    lastQueryResult = { query: question, persona, data, elapsed, timestamp: new Date().toISOString() };
+
+    // QueryV2Response field mapping
+    const answer = data.raw_answer || data.answer || data.result || JSON.stringify(data, null, 2);
+    const rawVerdict = (data.overall_verdict || data.verdict || 'PASS').toUpperCase();
+    const confidence = typeof data.avg_confidence === 'number'
+      ? data.avg_confidence.toFixed(2)
+      : (typeof data.confidence === 'number' ? data.confidence.toFixed(2) : '—');
+    const chunks = Array.isArray(data.retrieved_chunks) ? data.retrieved_chunks : [];
+    const topSim = chunks.length > 0
+      ? Math.max(...chunks.map(c => c.similarity ?? 0)).toFixed(4)
+      : '—';
+    const claims = Array.isArray(data.claims) ? data.claims : [];
+    const passClaims = claims.filter(c => (c.verdict || '').toUpperCase() === 'PASS').length;
+    const claimsStr = claims.length > 0 ? passClaims + '/' + claims.length + ' claims' : '—';
+
+    const verdictMap = {
+      COMPLIANT: 'vpass', PASS: 'vpass', RESPOND: 'vpass',
+      CONDITIONAL: 'vpart', PARTIAL: 'vpart', GAP_REPORT: 'vpart', RETRY_RETRIEVE: 'vpart', FLAG: 'vpart',
+      NON_COMPLIANT: 'vgap', FAIL: 'vgap', REJECTED: 'vgap'
+    };
+
+    // THING 2 — if 0 claims pass, override to GAP REPORT regardless of API verdict
+    const forceGap = claims.length > 0 && passClaims === 0;
+    if (forceGap && typeof sa_event !== 'undefined') sa_event('gap_report', { persona });
+    const effectiveVerdict = forceGap ? 'GAP_REPORT' : rawVerdict;
+    const vc = verdictMap[effectiveVerdict] || 'vpart';
+    const vLabel = forceGap
+      ? 'GAP REPORT — INSUFFICIENT EVIDENCE'
+      : (rawVerdict === 'NON_COMPLIANT' ? 'FAIL' : rawVerdict === 'RESPOND' ? 'PASS' : rawVerdict);
+
+    setTimeout(() => {
+      loading.classList.remove('show');
+      btn.disabled = false;
+
+      document.getElementById('verdict').className = 'verdict ' + vc;
+
+      if (forceGap) {
+        document.getElementById('v-lbl').innerHTML = 'GAP REPORT — INSUFFICIENT EVIDENCE <span id="gapTip" style="cursor:help;font-size:10px;opacity:0.75;position:relative;">ⓘ</span>';
+        const tip = document.getElementById('gapTip');
+        let tipEl = null;
+        tip.addEventListener('mouseenter', () => {
+          tipEl = document.createElement('div');
+          tipEl.textContent = 'This is a trust feature, not an error — it means the system is working correctly.';
+          tipEl.style.cssText = 'position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0f0e0c;color:#fff;font-size:10px;font-family:var(--mono);padding:6px 10px;border-radius:7px;white-space:nowrap;z-index:999;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.2);';
+          tip.style.position = 'relative';
+          tip.appendChild(tipEl);
+        });
+        tip.addEventListener('mouseleave', () => { if (tipEl) tipEl.remove(); tipEl = null; });
+      } else {
+        document.getElementById('v-lbl').textContent = vLabel;
+      }
+      document.getElementById('res-meta').textContent =
+        'Confidence ' + confidence + ' · ' + persona.replace('_', ' ') + ' · ' + elapsed;
+      document.getElementById('sim-val').textContent = topSim;
+      document.getElementById('claims-val').textContent = claimsStr;
+      document.getElementById('ans-box').innerHTML = renderMarkdown(answer);
+
+      qCount++;
+      document.getElementById('q-count').textContent = qCount;
+      addRow(rawVerdict);
+      result.classList.add('show');
+
+      setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+    }, 200);
+
+  } catch (err) {
+    bar.style.width = '100%';
+    setTimeout(() => {
+      loading.classList.remove('show');
+      btn.disabled = false;
+      errBox.textContent = 'Error: ' + err.message + ' — Check API health or wake endpoint first.';
+      errBox.classList.add('show');
+    }, 200);
+  }
+}
+
+function addRow(verdict) {
+  const q = document.getElementById('qtext').value.substring(0, 44) + '…';
+  const p = persona.replace('_', ' ');
+  const h = Math.random().toString(36).substr(2, 6) + '…' + Math.random().toString(36).substr(2, 4);
+  const now = new Date();
+  const ts = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0');
+  const pcls = persona === 'ml_engineer' ? 'ca' : 'cb';
+  const vcls = ['FAIL','NON_COMPLIANT','REJECTED'].includes(verdict) ? 'cr' : (verdict === 'CONDITIONAL' || verdict === 'PARTIAL' || verdict === 'GAP_REPORT' ? 'ca' : 'cg');
+  const vlbl = verdict === 'NON_COMPLIANT' ? 'FAIL' : (verdict === 'COMPLIANT' ? 'PASS' : verdict);
+  const row = document.createElement('tr');
+  row.innerHTML = `<td class="hash" style="color:var(--ink3)">${ts}</td><td>${q}</td><td><span class="chip ${pcls}">${p}</span></td><td><span class="chip ${vcls}">${vlbl}</span></td><td class="hash">${h}</td>`;
+  row.style.animation = 'rise 0.3s ease';
+  document.getElementById('audit-body').prepend(row);
+}
+
+function toggleMic() {
+  const btn = document.getElementById('mic-btn'), wave = document.getElementById('wave-row');
+  if (!isRec) {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      recognition.onresult = e => {
+        document.getElementById('qtext').value = Array.from(e.results).map(r => r[0].transcript).join('');
+      };
+      recognition.onend = () => { isRec = false; btn.classList.remove('rec'); wave.classList.remove('show'); };
+      recognition.start();
+    } else {
+      document.getElementById('qtext').value = 'What are the prohibited AI practices under EU AI Act Article 5?';
+      return;
+    }
+    isRec = true; btn.classList.add('rec'); wave.classList.add('show');
+  } else {
+    if (recognition) recognition.stop();
+    isRec = false; btn.classList.remove('rec'); wave.classList.remove('show');
+  }
+}
+
+function handleFile(input) {
+  if (!input.files.length) return;
+  const name = input.files[0].name;
+  if (typeof sa_event !== 'undefined') sa_event('document_upload');
+  document.getElementById('uplbl').innerHTML = `<span class="ftag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>${name}<span class="ftx" onclick="clearFile(event)">✕</span></span>`;
+}
+
+function clearFile(e) {
+  e.stopPropagation();
+  document.getElementById('uplbl').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload document for analysis`;
+  document.getElementById('file-in').value = '';
+}
+
+document.getElementById('qtext').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) runQuery();
+});
+
+function exportAuditPDF() {
+  if (!lastQueryResult) { alert('Run a query first.'); return; }
+  if (typeof window.jspdf === 'undefined') { alert('jsPDF not loaded — check network connection.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  const usable = pw - margin * 2;
+  let y = margin;
+
+  const { query, persona: p, data, elapsed, timestamp } = lastQueryResult;
+  const claims = Array.isArray(data.claims) ? data.claims : [];
+  const verdict = data.overall_verdict || data.verdict || 'N/A';
+  const confidence = typeof data.avg_confidence === 'number' ? data.avg_confidence.toFixed(4) : '—';
+  const auditHashes = Array.isArray(data.audit_hashes) ? data.audit_hashes : [];
+  const thresholds = { lead_auditor: 0.96, ml_engineer: 0.88, legal_counsel: 0.96, hr_auditor: 0.92, qa_engineer: 0.90 };
+  const threshold = thresholds[p] || 0.88;
+
+  const lineH = 5.5;
+  const addText = (text, opts = {}) => {
+    const { size = 9, bold = false, color = [30, 30, 30], indent = 0 } = opts;
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(text, usable - indent);
+    lines.forEach(line => {
+      if (y > 270) { doc.addPage(); y = margin; }
+      doc.text(line, margin + indent, y);
+      y += lineH;
+    });
+  };
+  const addRule = (color = [220, 220, 215]) => {
+    doc.setDrawColor(...color);
+    doc.line(margin, y, pw - margin, y);
+    y += 4;
+  };
+
+  // PAGE 1 — HEADER
+  doc.setFillColor(26, 79, 214);
+  doc.rect(0, 0, pw, 14, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ReguLens Compliance Intelligence Report', margin, 9.5);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('v1 — Academic Prototype', pw - margin, 9.5, { align: 'right' });
+  y = 22;
+
+  addText('QUERY', { size: 7.5, bold: true, color: [120, 120, 120] });
+  addText(query, { size: 10, bold: false });
+  y += 2;
+  addRule();
+
+  const metaRows = [
+    ['Persona', p.replace('_', ' ')],
+    ['NLI Threshold', String(threshold)],
+    ['Avg Confidence', confidence],
+    ['Timestamp', timestamp],
+    ['Response Time', elapsed],
+    ['Audit Hash', auditHashes.length > 0 ? auditHashes[auditHashes.length - 1] : 'N/A'],
+  ];
+  metaRows.forEach(([label, val]) => {
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ':', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(30, 30, 30);
+    doc.text(val, margin + 38, y);
+    y += lineH;
+  });
+  y += 3;
+
+  // Verdict badge
+  const vColors = {
+    COMPLIANT: [18, 122, 76], 'PARTIALLY COMPLIANT': [160, 90, 0],
+    NON_COMPLIANT: [192, 57, 43], INSUFFICIENT_EVIDENCE: [100, 100, 100]
+  };
+  const vc = vColors[verdict] || [100, 100, 100];
+  doc.setFillColor(...vc);
+  doc.roundedRect(margin, y, 70, 8, 2, 2, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Overall Verdict: ' + verdict, margin + 3, y + 5.5);
+  y += 14;
+  addRule();
+
+  // PAGE 2+ — CLAIMS TABLE
+  if (claims.length > 0) {
+    addText('CLAIM-LEVEL VERIFICATION', { size: 8, bold: true, color: [26, 79, 214] });
+    y += 2;
+
+    claims.forEach((claim, i) => {
+      if (y > 260) { doc.addPage(); y = margin; }
+      const claimText = claim.claim_text || claim.text || '';
+      const nliVerdict = (claim.nli_verdict || claim.verdict || 'neutral').toUpperCase();
+      const conf = claim.confidence != null ? (claim.confidence * 100).toFixed(1) + '%' : '—';
+      const decision = claim.decision || '—';
+      const citedSpan = claim.cited_span || '';
+
+      const decColor = decision === 'PASS' ? [18, 122, 76] : decision === 'BLOCK' ? [192, 57, 43] : [160, 90, 0];
+
+      addText(`Claim ${i + 1}`, { size: 8, bold: true });
+      addText(claimText, { size: 8.5, indent: 4 });
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(`NLI: ${nliVerdict}  |  Confidence: ${conf}  |  Threshold: ${threshold}`, margin + 4, y);
+      y += lineH;
+      doc.setTextColor(...decColor);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Decision: ${decision}`, margin + 4, y);
+      y += lineH;
+
+      if (citedSpan) {
+        doc.setTextColor(80, 80, 80);
+        doc.setFont('helvetica', 'italic');
+        const spanLines = doc.splitTextToSize('Source: ' + citedSpan.substring(0, 200), usable - 8);
+        spanLines.forEach(line => {
+          if (y > 270) { doc.addPage(); y = margin; }
+          doc.text(line, margin + 4, y);
+          y += 4.5;
+        });
+      }
+      y += 2;
+      doc.setDrawColor(235, 235, 230);
+      doc.line(margin, y, pw - margin, y);
+      y += 4;
+    });
+  } else {
+    addText('No claim-level data returned for this query.', { size: 9, color: [120, 120, 120] });
+    y += 4;
+  }
+
+  // FINAL PAGE — CHAIN OF CUSTODY
+  if (y > 240) { doc.addPage(); y = margin; }
+  addRule([200, 200, 200]);
+  addText('CHAIN OF CUSTODY', { size: 8, bold: true, color: [26, 79, 214] });
+  y += 2;
+
+  if (auditHashes.length > 0) {
+    auditHashes.forEach((hash, i) => {
+      addText(`[${i + 1}] ${hash}`, { size: 7.5, color: [80, 80, 80], indent: 4 });
+    });
+  } else {
+    addText('No audit hash chain available.', { size: 8, color: [120, 120, 120], indent: 4 });
+  }
+  y += 6;
+  addRule();
+
+  addText('DISCLAIMER', { size: 7.5, bold: true, color: [120, 120, 120] });
+  addText(
+    'Generated by ReguLens v1 — Academic prototype. Outputs are AI-generated and require human review before use in any compliance decision. Not legal advice.',
+    { size: 7.5, color: [120, 120, 120] }
+  );
+
+  // Save
+  const fname = `ReguLens_Audit_${timestamp.slice(0,16).replace('T','_').replace(':','-')}.pdf`;
+  doc.save(fname);
+}
+
+// === ANIMATIONS ===
+
+// 1. Count-up for stat cards
+function countUp(el) {
+  const target = parseFloat(el.dataset.target);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const suffix = el.dataset.suffix || '';
+  if (isNaN(target)) return;
+  const dur = 1100, step = 16, steps = Math.ceil(dur / step);
+  let i = 0;
+  const iv = setInterval(() => {
+    i++;
+    const ease = 1 - Math.pow(1 - i / steps, 3);
+    const val = target * ease;
+    el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.round(val)) + suffix;
+    if (i >= steps) {
+      el.textContent = (decimals > 0 ? target.toFixed(decimals) : String(target)) + suffix;
+      clearInterval(iv);
+    }
+  }, step);
+}
+
+// 2. Animated bars (corpus fill bars + DSPy journey bars)
+function animateBars(selector) {
+  document.querySelectorAll(selector).forEach(bar => {
+    const to = bar.dataset.to;
+    if (!to) return;
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = '';
+      bar.style.width = to + '%';
+    }));
+  });
+}
+
+// 3. Typing placeholder effect (cycles when textarea is empty + unfocused)
+const TYPING_QUERIES = [
+  'What does EU AI Act Article 9 require for high-risk AI systems?',
+  'What are the prohibited practices under EU AI Act Article 5?',
+  'How does the NIST AI RMF GOVERN function apply to AI risk management?',
+  'What human oversight controls does ISO 42001 Clause 6 require?',
+  'What transparency obligations apply under EU AI Act Articles 13 and 14?'
+];
+let tqIdx = 0, tqPos = 0, tqDel = false;
+function typeTick() {
+  const el = document.getElementById('qtext');
+  if (document.activeElement === el || el.value.trim()) {
+    setTimeout(typeTick, 1500);
+    return;
+  }
+  const q = TYPING_QUERIES[tqIdx];
+  if (!tqDel) {
+    tqPos = Math.min(tqPos + 1, q.length);
+    el.placeholder = q.substring(0, tqPos);
+    if (tqPos >= q.length) { tqDel = true; setTimeout(typeTick, 2000); return; }
+    setTimeout(typeTick, 48);
+  } else {
+    tqPos = Math.max(tqPos - 1, 0);
+    el.placeholder = q.substring(0, tqPos);
+    if (tqPos <= 0) {
+      tqDel = false;
+      tqIdx = (tqIdx + 1) % TYPING_QUERIES.length;
+      setTimeout(typeTick, 380);
+      return;
+    }
+    setTimeout(typeTick, 26);
+  }
+}
+
+// 4. Scroll-triggered fade-in via IntersectionObserver
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      fadeObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+// 5. Init
+window.addEventListener('DOMContentLoaded', () => {
+  // Count-up stat cards (visible on load)
+  document.querySelectorAll('.s-val[data-target]').forEach(el => countUp(el));
+
+  // Typing placeholder — start after load animations settle
+  setTimeout(typeTick, 1600);
+
+  // Scroll fade-in for non-query section cards
+  document.querySelectorAll('.arch-card,.obs-card,.corpus-card,.audit-card').forEach(el => {
+    el.classList.add('fade-in');
+    fadeObs.observe(el);
+  });
+});
+</script>
+</body>
+</html>
