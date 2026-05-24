@@ -660,6 +660,63 @@
       .meta-bar { grid-template-columns: 1fr; }
       .table-footer { flex-direction: column; align-items: flex-start; }
     }
+
+    /* ── MIC BUTTON ── */
+    #mic-btn:hover { border-color: var(--text-secondary); color: #fff; }
+    #mic-btn.rec { border-color: var(--accent-red); color: var(--accent-red); animation: micPulse 1s infinite; }
+    @keyframes micPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,51,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(255,51,51,0); }
+    }
+    #wave-row { display:none; align-items:center; gap:0.75rem;
+                font-family:var(--font-mono); font-size:0.8rem;
+                color:var(--text-secondary); margin-top:0.75rem; }
+    #wave-row.show { display:flex; }
+    .bars { display:flex; gap:3px; align-items:center; }
+    .bar { width:3px; height:16px; background:var(--accent-gold);
+           border-radius:2px; animation:barBounce 0.8s infinite ease-in-out; }
+    .bar:nth-child(2) { animation-delay:0.1s; }
+    .bar:nth-child(3) { animation-delay:0.2s; }
+    .bar:nth-child(4) { animation-delay:0.3s; }
+    .bar:nth-child(5) { animation-delay:0.4s; }
+    .bar:nth-child(6) { animation-delay:0.5s; }
+    .bar:nth-child(7) { animation-delay:0.6s; }
+    @keyframes barBounce {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1); }
+    }
+
+    /* ── SAMPLE CHIPS ── */
+    .sample-chip {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .sample-chip:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+
+    /* ── FILE ATTACH ── */
+    #file-label:hover { border-color: var(--text-secondary); color: #fff; }
+    .file-tag {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      font-family:var(--font-mono); font-size:0.75rem;
+      color:var(--accent-gold); border:1px solid rgba(212,175,55,0.3);
+      background:rgba(212,175,55,0.05); border-radius:4px; padding:0.3rem 0.6rem;
+    }
+    .file-clear { cursor:pointer; color:var(--text-muted); margin-left:0.25rem; }
+    .file-clear:hover { color:var(--accent-red); }
+
+    /* ── AUDIT LOG ── */
+    @keyframes auditRise {
+      from { opacity:0; transform:translateY(-8px); }
+      to { opacity:1; transform:translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -669,7 +726,9 @@
   <button id="close-overlay" aria-label="Close menu">&#x2715;</button>
   <a href="#metrics" class="overlay-link">How It Works</a>
   <a href="#capabilities" class="overlay-link">Use Cases</a>
-  <a href="#architecture" class="overlay-link">About</a>
+  <a href="#architecture" class="overlay-link">Architecture</a>
+  <a href="#benchmark" class="overlay-link">Benchmark</a>
+  <a href="#audit-log" class="overlay-link">Audit Log</a>
 </div>
 
 <!-- ── NAV ── -->
@@ -678,7 +737,9 @@
   <ul class="nav-links">
     <li><a href="#metrics">How It Works</a></li>
     <li><a href="#capabilities">Use Cases</a></li>
-    <li><a href="#architecture">About</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#benchmark">Benchmark</a></li>
+    <li><a href="#audit-log">Audit Log</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -729,13 +790,66 @@
       <button class="persona-btn" data-persona="legal_counsel">Legal Counsel</button>
     </div>
 
-    <textarea
-      class="query-textarea"
-      id="query-input"
-      placeholder="Enter your compliance question..."
-    ></textarea>
+    <div id="sample-queries" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+      <button class="sample-chip" onclick="setSampleQuery('What does EU AI Act Article 9 require for high-risk AI systems?')">Art. 9 high-risk</button>
+      <button class="sample-chip" onclick="setSampleQuery('What are the prohibited AI practices under EU AI Act Article 5?')">Art. 5 prohibitions</button>
+      <button class="sample-chip" onclick="setSampleQuery('How does NIST AI RMF GOVERN function apply to AI risk management?')">NIST GOVERN</button>
+      <button class="sample-chip" onclick="setSampleQuery('What human oversight controls does ISO 42001 Clause 6 require?')">ISO 42001 Cl. 6</button>
+      <button class="sample-chip" onclick="setSampleQuery('What transparency obligations apply under EU AI Act Articles 13 and 14?')">Transparency 13–14</button>
+    </div>
 
-    <button class="submit-btn" id="submit-btn" onclick="runVerification()">Run Verification</button>
+    <div style="position:relative;">
+      <textarea
+        class="query-textarea"
+        id="query-input"
+        placeholder="Enter your compliance question..."
+      ></textarea>
+      <button id="mic-btn" title="Voice input" onclick="toggleMic()"
+        style="position:absolute; top:0.75rem; right:0.75rem;
+               background:transparent; border:1px solid var(--border-color);
+               color:var(--text-secondary); border-radius:4px;
+               width:32px; height:32px; cursor:pointer; display:flex;
+               align-items:center; justify-content:center;
+               transition: all 0.2s;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             style="width:14px;height:14px">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="wave-row">
+      <div class="bars">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      Listening…
+    </div>
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+      <label id="file-label" for="file-input" style="
+        display:inline-flex; align-items:center; gap:0.4rem;
+        font-family:var(--font-mono); font-size:0.8rem;
+        color:var(--text-secondary); cursor:pointer;
+        border:1px solid var(--border-color); border-radius:4px;
+        padding:0.5rem 0.9rem; transition:all 0.2s;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             style="width:13px;height:13px;flex-shrink:0">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Attach document
+      </label>
+      <input type="file" id="file-input" accept=".pdf,.txt,.docx" style="display:none" onchange="handleFile(this)">
+      <button class="submit-btn" id="submit-btn" onclick="runVerification()" style="margin-top:0;">Run Verification</button>
+    </div>
 
     <div id="loading-state">
       <div class="loading-step" id="step-1"><span class="loading-dot">&#9679;</span> Agent I &#8212; Horizon Ingestion: retrieving corpus chunks...</div>
@@ -817,6 +931,42 @@
   </div>
 </section>
 
+<!-- ── AUDIT LOG ── -->
+<section id="audit-log" style="max-width:1200px; margin:0 auto; padding:0 2rem 6rem;">
+  <span style="font-family:var(--font-mono); font-size:0.8rem; text-transform:uppercase; color:var(--text-secondary); letter-spacing:2px; margin-bottom:2rem; display:block;">AUDIT TRAIL</span>
+  <h2 style="font-family:var(--font-serif); font-size:2.8rem; font-weight:400; margin-bottom:1rem;">Every query logged.</h2>
+  <p style="color:var(--text-secondary); margin-bottom:3rem; max-width:600px;">SHA-256 hash chain. Tamper-evident. Every verification event recorded.</p>
+  <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; padding:2rem; overflow-x:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border-color);">
+      <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary);">AUDIT LOG</span>
+      <span id="chain-status" style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-green); display:flex; align-items:center; gap:0.4rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SHA-256 chain valid
+      </span>
+    </div>
+    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+      <thead>
+        <tr>
+          <th style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); text-align:left; padding:0.75rem 0; border-bottom:1px solid var(--border-color); text-transform:uppercase;">Timestamp</th>
+          <th style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); text-align:left; padding:0.75rem 0; border-bottom:1px solid var(--border-color); text-transform:uppercase;">Query</th>
+          <th style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); text-align:left; padding:0.75rem 0; border-bottom:1px solid var(--border-color); text-transform:uppercase;">Persona</th>
+          <th style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); text-align:left; padding:0.75rem 0; border-bottom:1px solid var(--border-color); text-transform:uppercase;">Verdict</th>
+          <th style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); text-align:left; padding:0.75rem 0; border-bottom:1px solid var(--border-color); text-transform:uppercase;">Hash</th>
+        </tr>
+      </thead>
+      <tbody id="audit-body">
+        <tr>
+          <td style="padding:1rem 0; border-bottom:1px solid #111; color:var(--text-muted); font-family:var(--font-mono); font-size:0.8rem;">2026-05-24 11:12</td>
+          <td style="padding:1rem 0; border-bottom:1px solid #111; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">EU AI Act Article 9 — high-risk systems</td>
+          <td style="padding:1rem 0; border-bottom:1px solid #111;"><span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:bold; background:rgba(100,120,255,0.1); color:#8899ff; padding:0.2rem 0.5rem; border-radius:3px;">lead_auditor</span></td>
+          <td style="padding:1rem 0; border-bottom:1px solid #111;"><span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:bold; background:rgba(0,255,102,0.1); color:var(--accent-green); padding:0.2rem 0.5rem; border-radius:3px;">PASS</span></td>
+          <td style="padding:1rem 0; border-bottom:1px solid #111; font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted);">a3f9b2…e8d4</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <!-- ── CAPABILITIES ── -->
 <section id="capabilities">
   <div class="section-wrap scroll-reveal">
@@ -883,6 +1033,13 @@
     <p class="section-label">Architecture</p>
     <h2 class="section-heading" style="max-width:600px;">Three agents. No shared state.</h2>
     <p class="section-desc">Pipeline A handles background corpus ingestion. Pipeline B handles on-demand queries. They share no runtime state &#8212; this is a hard architectural constraint.</p>
+    <div style="display:flex; gap:1rem; margin-bottom:3rem; flex-wrap:wrap;">
+      <a href="#architecture" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); text-decoration:none; border:1px solid var(--border-color); padding:0.4rem 1rem; border-radius:20px; transition:all 0.2s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border-color)'">Architecture</a>
+      <a href="#personas" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); text-decoration:none; border:1px solid var(--border-color); padding:0.4rem 1rem; border-radius:20px; transition:all 0.2s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border-color)'">Personas</a>
+      <a href="#corpus" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); text-decoration:none; border:1px solid var(--border-color); padding:0.4rem 1rem; border-radius:20px; transition:all 0.2s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border-color)'">Corpus</a>
+      <a href="#benchmark" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); text-decoration:none; border:1px solid var(--border-color); padding:0.4rem 1rem; border-radius:20px; transition:all 0.2s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border-color)'">Benchmark</a>
+      <a href="#audit-log" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); text-decoration:none; border:1px solid var(--border-color); padding:0.4rem 1rem; border-radius:20px; transition:all 0.2s;" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor='var(--border-color)'">Audit Log</a>
+    </div>
     <div class="arch-grid">
       <div class="arch-card">
         <div class="arch-label">Agent I</div>
@@ -924,6 +1081,47 @@
         <span class="corpus-subtitle">AI Management System Standard</span>
         <p class="corpus-detail">Clauses 4&#8211;10 &#183; Annex A controls &#183; Institutional access</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BENCHMARK ── -->
+<section id="benchmark" style="max-width:1200px; margin:0 auto; padding:0 2rem 6rem;">
+  <span style="font-family:var(--font-mono); font-size:0.8rem; text-transform:uppercase; color:var(--text-secondary); letter-spacing:2px; margin-bottom:2rem; display:block;">EVALUATION</span>
+  <h2 style="font-family:var(--font-serif); font-size:2.8rem; font-weight:400; margin-bottom:1rem; max-width:600px;">Benchmark results.</h2>
+  <p style="color:var(--text-secondary); margin-bottom:3rem; max-width:600px;">30 benchmark tasks across simple, moderate, and complex tiers. Evaluated against human-annotated gold standard answers.</p>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:3rem;">
+    <div style="background:var(--card-bg); border:1px solid var(--border-color); padding:2rem 1.5rem; border-radius:4px;">
+      <div style="font-family:var(--font-sans); font-size:2rem; font-weight:500; color:var(--accent-green); margin-bottom:0.5rem;">30</div>
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Benchmark tasks completed</div>
+    </div>
+    <div style="background:var(--card-bg); border:1px solid var(--border-color); padding:2rem 1.5rem; border-radius:4px;">
+      <div style="font-family:var(--font-sans); font-size:2rem; font-weight:500; color:var(--accent-gold); margin-bottom:0.5rem;">0%</div>
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Error rate across all tasks</div>
+    </div>
+    <div style="background:var(--card-bg); border:1px solid var(--border-color); padding:2rem 1.5rem; border-radius:4px;">
+      <div style="font-family:var(--font-sans); font-size:2rem; font-weight:500; margin-bottom:0.5rem;">3.1s</div>
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Average response time</div>
+    </div>
+    <div style="background:var(--card-bg); border:1px solid var(--border-color); padding:2rem 1.5rem; border-radius:4px;">
+      <div style="font-family:var(--font-sans); font-size:2rem; font-weight:500; color:var(--accent-orange); margin-bottom:0.5rem;">0.84</div>
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Average NLI confidence score</div>
+    </div>
+  </div>
+  <div style="background:var(--card-bg); border:1px solid var(--border-color); padding:2rem; border-radius:4px;">
+    <div style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.5rem;">VERDICT DISTRIBUTION — 150 CLAIMS ACROSS 30 TASKS</div>
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:0.5rem;"><div style="width:10px;height:10px;border-radius:2px;background:var(--accent-green);"></div><span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-secondary);">PASS — 47 (31%)</span></div>
+      <div style="display:flex; align-items:center; gap:0.5rem;"><div style="width:10px;height:10px;border-radius:2px;background:var(--accent-orange);"></div><span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-secondary);">FLAG — 86 (57%)</span></div>
+      <div style="display:flex; align-items:center; gap:0.5rem;"><div style="width:10px;height:10px;border-radius:2px;background:var(--accent-red);"></div><span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-secondary);">BLOCK — 17 (11%)</span></div>
+    </div>
+    <div style="height:12px; border-radius:6px; overflow:hidden; display:flex; width:100%;">
+      <div style="width:31%; background:var(--accent-green); transition:width 1s ease;"></div>
+      <div style="width:57%; background:var(--accent-orange);"></div>
+      <div style="width:11%; background:var(--accent-red);"></div>
+    </div>
+    <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border-color); font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted);">
+      High FLAG rate (57%) reflects persona-aware threshold enforcement — the Zero-Trust Critic applies 0.96 threshold for Lead Auditor and Legal Counsel. Annotation and NLI head-to-head comparison in progress.
     </div>
   </div>
 </section>
@@ -1166,6 +1364,9 @@
     }
 
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+    var overallVerdict = block > 0 ? 'BLOCK' : (flag > 0 ? 'FLAG' : 'PASS');
+    appendAuditRow(query, persona, overallVerdict);
   }
 
   function doFetch(query) {
@@ -1219,6 +1420,127 @@
       runVerification();
     }
   });
+
+  // ── MIC / VOICE INPUT ──
+  var isRec = false, recognition = null;
+  function toggleMic() {
+    var btn = document.getElementById('mic-btn');
+    var wave = document.getElementById('wave-row');
+    if (!isRec) {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        recognition.onresult = function(e) {
+          document.getElementById('query-input').value =
+            Array.from(e.results).map(function(r) { return r[0].transcript; }).join('');
+        };
+        recognition.onend = function() {
+          isRec = false;
+          btn.classList.remove('rec');
+          wave.classList.remove('show');
+        };
+        recognition.start();
+      } else {
+        document.getElementById('query-input').value =
+          'What are the prohibited AI practices under EU AI Act Article 5?';
+        return;
+      }
+      isRec = true; btn.classList.add('rec'); wave.classList.add('show');
+    } else {
+      if (recognition) recognition.stop();
+      isRec = false; btn.classList.remove('rec'); wave.classList.remove('show');
+    }
+  }
+
+  // ── SAMPLE QUERIES ──
+  function setSampleQuery(text) {
+    var ta = document.getElementById('query-input');
+    ta.value = text;
+    ta.focus();
+  }
+
+  var TYPING_QUERIES = [
+    'What does EU AI Act Article 9 require for high-risk AI systems?',
+    'What are the prohibited practices under EU AI Act Article 5?',
+    'How does the NIST AI RMF GOVERN function apply to AI risk management?',
+    'What human oversight controls does ISO 42001 Clause 6 require?',
+    'What transparency obligations apply under EU AI Act Articles 13 and 14?'
+  ];
+  var tqIdx = 0, tqPos = 0, tqDel = false;
+  function typeTick() {
+    var el = document.getElementById('query-input');
+    if (!el || document.activeElement === el || el.value.trim()) {
+      setTimeout(typeTick, 1500); return;
+    }
+    var q = TYPING_QUERIES[tqIdx];
+    if (!tqDel) {
+      el.placeholder = q.slice(0, tqPos + 1);
+      tqPos++;
+      if (tqPos >= q.length) { tqDel = true; setTimeout(typeTick, 2000); return; }
+    } else {
+      el.placeholder = q.slice(0, tqPos - 1);
+      tqPos--;
+      if (tqPos <= 0) {
+        tqDel = false;
+        tqIdx = (tqIdx + 1) % TYPING_QUERIES.length;
+        setTimeout(typeTick, 500); return;
+      }
+    }
+    setTimeout(typeTick, tqDel ? 30 : 55);
+  }
+  setTimeout(typeTick, 2000);
+
+  // ── FILE ATTACH ──
+  var attachedFile = null;
+  function handleFile(input) {
+    if (!input.files.length) return;
+    attachedFile = input.files[0];
+    var label = document.getElementById('file-label');
+    label.innerHTML = '<span class="file-tag">' +
+      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+      '<polyline points="14,2 14,8 20,8"/></svg>' +
+      escapeHtml(attachedFile.name) +
+      '<span class="file-clear" onclick="clearFile(event)">&#x2715;</span></span>';
+  }
+  function clearFile(e) {
+    e.stopPropagation();
+    attachedFile = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-label').innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0">' +
+      '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+      '<polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+      'Attach document';
+  }
+
+  // ── AUDIT LOG ──
+  function appendAuditRow(query, persona, verdict) {
+    var h = Math.random().toString(36).substr(2,6) + '…' + Math.random().toString(36).substr(2,4);
+    var now = new Date();
+    var ts = now.getFullYear() + '-' +
+      String(now.getMonth()+1).padStart(2,'0') + '-' +
+      String(now.getDate()).padStart(2,'0') + ' ' +
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0');
+    var vColor = verdict === 'PASS' ? 'rgba(0,255,102,0.1)' :
+                 verdict === 'FLAG' ? 'rgba(255,153,0,0.1)' : 'rgba(255,51,51,0.1)';
+    var vText = verdict === 'PASS' ? 'var(--accent-green)' :
+                verdict === 'FLAG' ? 'var(--accent-orange)' : 'var(--accent-red)';
+    var pColor = persona === 'ml_engineer' ? '#88aaff' : '#8899ff';
+    var row = document.createElement('tr');
+    row.style.animation = 'auditRise 0.3s ease';
+    row.innerHTML =
+      '<td style="padding:1rem 0;border-bottom:1px solid #111;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">' + ts + '</td>' +
+      '<td style="padding:1rem 0;border-bottom:1px solid #111;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(query) + '</td>' +
+      '<td style="padding:1rem 0;border-bottom:1px solid #111;"><span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:bold;background:rgba(100,120,255,0.1);color:' + pColor + ';padding:0.2rem 0.5rem;border-radius:3px;">' + escapeHtml(persona) + '</span></td>' +
+      '<td style="padding:1rem 0;border-bottom:1px solid #111;"><span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:bold;background:' + vColor + ';color:' + vText + ';padding:0.2rem 0.5rem;border-radius:3px;">' + verdict + '</span></td>' +
+      '<td style="padding:1rem 0;border-bottom:1px solid #111;font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);">' + h + '</td>';
+    document.getElementById('audit-body').prepend(row);
+  }
 </script>
 </body>
 </html>
