@@ -717,9 +717,59 @@
       from { opacity:0; transform:translateY(-8px); }
       to { opacity:1; transform:translateY(0); }
     }
+
+    /* ── RESPONSE PANEL ── */
+    @keyframes fadeSlideIn {
+      from { opacity:0; transform:translateY(12px); }
+      to { opacity:1; transform:translateY(0); }
+    }
   </style>
 </head>
 <body>
+
+<!-- ── LOGIN OVERLAY ── -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:9999;background:#050505;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div id="login-matrix" style="position:absolute;inset:0;overflow:hidden;opacity:0.08;pointer-events:none;font-family:'Courier New',monospace;font-size:0.85rem;"></div>
+  <div style="position:relative;z-index:1;width:100%;max-width:420px;padding:2rem;margin:1rem;">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div style="font-family:'Georgia',serif;font-size:1.8rem;font-weight:400;color:#fff;margin-bottom:0.5rem;">ReguLens</div>
+      <div style="font-family:'Courier New',monospace;font-size:0.75rem;text-transform:uppercase;letter-spacing:2px;color:#888;">Verifiable Compliance Intelligence</div>
+    </div>
+    <div style="background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;padding:2.5rem;">
+      <div style="font-family:'Courier New',monospace;font-size:0.75rem;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:2rem;">Sign in to your workspace</div>
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-family:'Courier New',monospace;font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">Email</label>
+        <input id="login-email" type="email" placeholder="auditor@organization.com"
+          style="width:100%;background:#050505;border:1px solid #1a1a1a;color:#fff;padding:0.85rem 1rem;border-radius:4px;font-size:0.95rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='#444'" onblur="this.style.borderColor='#1a1a1a'">
+      </div>
+      <div style="margin-bottom:2rem;">
+        <label style="display:block;font-family:'Courier New',monospace;font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">Password</label>
+        <input id="login-password" type="password" placeholder="••••••••"
+          style="width:100%;background:#050505;border:1px solid #1a1a1a;color:#fff;padding:0.85rem 1rem;border-radius:4px;font-size:0.95rem;outline:none;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='#444'" onblur="this.style.borderColor='#1a1a1a'"
+          onkeydown="if(event.key==='Enter') attemptLogin()">
+      </div>
+      <div id="login-error" style="display:none;font-family:'Courier New',monospace;font-size:0.8rem;color:#ff3333;margin-bottom:1rem;">Please enter your email and password.</div>
+      <button onclick="attemptLogin()" style="width:100%;background:transparent;border:1px solid #888;color:#fff;padding:0.9rem;border-radius:4px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;margin-bottom:1.5rem;"
+        onmouseover="this.style.borderColor='#fff';this.style.background='rgba(255,255,255,0.05)'"
+        onmouseout="this.style.borderColor='#888';this.style.background='transparent'">Sign In →</button>
+      <div style="border-top:1px solid #1a1a1a;padding-top:1.5rem;text-align:center;">
+        <span style="font-family:'Courier New',monospace;font-size:0.75rem;color:#444;">Don't have access?</span>
+        <a href="mailto:kareem@regulens.app" style="font-family:'Courier New',monospace;font-size:0.75rem;color:#888;text-decoration:none;margin-left:0.5rem;transition:color 0.2s;"
+          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">Request access →</a>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;">
+      <span style="font-family:'Courier New',monospace;font-size:0.7rem;color:#333;display:flex;align-items:center;gap:0.3rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SHA-256 audit chain
+      </span>
+      <span style="font-family:'Courier New',monospace;font-size:0.7rem;color:#333;">EU AI Act · NIST AI RMF · ISO 42001</span>
+      <span style="font-family:'Courier New',monospace;font-size:0.7rem;color:#333;">v1.0.0-academic</span>
+    </div>
+  </div>
+</div>
 
 <!-- ── MOBILE OVERLAY ── -->
 <div id="mobile-overlay">
@@ -740,6 +790,7 @@
     <li><a href="#architecture">Architecture</a></li>
     <li><a href="#benchmark">Benchmark</a></li>
     <li><a href="#audit-log">Audit Log</a></li>
+    <li><a href="#" onclick="signOut();return false;" style="color:#555;">Sign out</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -872,6 +923,13 @@
         <div class="meta-item"><label>Persona</label><span id="meta-persona">lead_auditor</span></div>
         <div class="meta-item"><label>Threshold</label><span id="meta-threshold">0.96</span></div>
         <div class="meta-item"><label>Framework</label><span id="meta-framework">EU AI Act</span></div>
+      </div>
+
+      <div id="response-panel" style="display:none; margin-bottom:2rem;">
+        <div id="answer-blocks"></div>
+        <div style="border-top:1px solid var(--border-color); padding-top:1.5rem; margin-bottom:1.5rem;">
+          <span style="font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:2px;">SOURCE VERIFICATION</span>
+        </div>
       </div>
 
       <div style="overflow-x:auto;">
@@ -1357,6 +1415,54 @@
 
     document.getElementById('footer-counts').textContent = pass + ' PASS · ' + flag + ' FLAG · ' + block + ' BLOCK';
 
+    // ── RESPONSE PANEL ──
+    var panel = document.getElementById('response-panel');
+    var answerBlocks = document.getElementById('answer-blocks');
+    panel.style.display = 'block';
+    answerBlocks.innerHTML = '';
+
+    if (results.length > 0) {
+      var summaryEl = document.createElement('div');
+      summaryEl.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:0.5rem;';
+      summaryEl.innerHTML =
+        '<span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-secondary);">' + results.length + ' sources retrieved</span>' +
+        '<span style="font-family:var(--font-mono);font-size:0.8rem;">' +
+        '<span style="color:var(--accent-green);">' + pass + ' PASS</span>' +
+        '<span style="color:var(--text-muted);"> · </span>' +
+        '<span style="color:var(--accent-orange);">' + flag + ' FLAG</span>' +
+        '<span style="color:var(--text-muted);"> · </span>' +
+        '<span style="color:var(--accent-red);">' + block + ' BLOCK</span></span>';
+      answerBlocks.appendChild(summaryEl);
+
+      var sorted = results.slice().sort(function(a, b) {
+        var order = {PASS:0, FLAG:1, BLOCK:2};
+        return (order[verdictClass(a.verdict)] || 1) - (order[verdictClass(b.verdict)] || 1);
+      });
+
+      sorted.forEach(function(item, i) {
+        var vc = verdictClass(item.verdict);
+        var vColor = vc === 'PASS' ? 'var(--accent-green)' : vc === 'FLAG' ? 'var(--accent-orange)' : 'var(--accent-red)';
+        var vBg = vc === 'PASS' ? 'rgba(0,255,102,0.05)' : vc === 'FLAG' ? 'rgba(255,153,0,0.05)' : 'rgba(255,51,51,0.05)';
+        var sim = parseFloat(item.similarity || 0).toFixed(3);
+        var conf = parseFloat(item.confidence || 0).toFixed(3);
+        var blk = document.createElement('div');
+        blk.style.cssText = 'background:' + vBg + ';border:1px solid var(--border-color);border-left:3px solid ' + vColor + ';border-radius:4px;padding:1.5rem;margin-bottom:1rem;animation:fadeSlideIn 0.4s ease ' + (i * 0.1) + 's both;';
+        blk.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">' +
+            '<span style="font-family:var(--font-mono);font-size:0.8rem;font-weight:bold;color:' + vColor + ';">' + escapeHtml(item.article_ref || item.source || '—') + '</span>' +
+            '<div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">' +
+              '<span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">sim ' + sim + '</span>' +
+              '<span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">conf ' + conf + '</span>' +
+              '<span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:bold;padding:0.15rem 0.5rem;border-radius:3px;background:' + vBg + ';color:' + vColor + ';border:1px solid ' + vColor + '30;">' + vc + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.7;margin:0;font-family:var(--font-sans);">' +
+            escapeHtml(item.content || item.claim || '—').replace(/\n/g, '<br>') +
+          '</p>';
+        answerBlocks.appendChild(blk);
+      });
+    }
+
     if (data.audit_event_id) {
       document.getElementById('footer-audit').textContent = 'Audit ID: ' + data.audit_event_id;
     } else {
@@ -1387,6 +1493,8 @@
     var btn = document.getElementById('submit-btn');
     btn.disabled = true;
     document.getElementById('cold-start-msg').style.display = 'none';
+    document.getElementById('response-panel').style.display = 'none';
+    document.getElementById('answer-blocks').innerHTML = '';
     clearTimers();
     showLoadingSteps();
 
@@ -1516,6 +1624,58 @@
       '<polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
       'Attach document';
   }
+
+  // ── LOGIN ──
+  function initLoginMatrix() {
+    var container = document.getElementById('login-matrix');
+    if (!container) return;
+    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789αβγδεζηθΣ∫√≠';
+    var count = Math.floor(window.innerWidth / 40);
+    for (var i = 0; i < count; i++) {
+      var col = document.createElement('div');
+      col.style.cssText = 'position:absolute;top:-200px;left:' + ((i * 100) / count) + '%;display:flex;flex-direction:column;gap:10px;animation:fall ' + (10 + Math.random() * 15) + 's linear infinite;animation-delay:' + (Math.random() * -20) + 's;color:#888;';
+      var len = 5 + Math.floor(Math.random() * 6);
+      for (var j = 0; j < len; j++) {
+        var ch = document.createElement('div');
+        ch.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
+        if (Math.random() > 0.85) ch.style.color = '#555';
+        col.appendChild(ch);
+      }
+      container.appendChild(col);
+    }
+  }
+
+  function attemptLogin() {
+    var email = document.getElementById('login-email').value.trim();
+    var pass = document.getElementById('login-password').value;
+    var err = document.getElementById('login-error');
+    if (!email || !pass) {
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+    localStorage.setItem('rl_session', '1');
+    var loginOverlay = document.getElementById('login-overlay');
+    loginOverlay.style.transition = 'opacity 0.4s ease';
+    loginOverlay.style.opacity = '0';
+    setTimeout(function() { loginOverlay.style.display = 'none'; }, 400);
+  }
+
+  function signOut() {
+    localStorage.removeItem('rl_session');
+    location.reload();
+  }
+
+  function checkSession() {
+    if (localStorage.getItem('rl_session')) {
+      var loginOverlay = document.getElementById('login-overlay');
+      if (loginOverlay) loginOverlay.style.display = 'none';
+    } else {
+      initLoginMatrix();
+    }
+  }
+
+  checkSession();
 
   // ── AUDIT LOG ──
   function appendAuditRow(query, persona, verdict) {
