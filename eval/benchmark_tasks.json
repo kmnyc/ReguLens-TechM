@@ -5,11 +5,11 @@
     "query": "What does EU AI Act Article 9 require for risk management?",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 9 of the EU AI Act requires providers of high-risk AI systems to establish, implement, document, and maintain a risk management system. The system must be a continuous iterative process run throughout the entire lifecycle of a high-risk AI system. It must identify and analyse known and reasonably foreseeable risks, estimate and evaluate those risks, adopt appropriate risk management measures, and test their effectiveness. Residual risks must be communicated to users. The risk management system must ensure that risks are reduced to the lowest possible level consistent with the state of the art, and that the high-risk AI system is compliant with the requirements of the Act.",
     "must_cite": ["Article 9"],
-    "must_not_claim": [],
+    "must_not_claim": ["Article 9 applies to all AI systems regardless of risk class"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-002",
@@ -17,11 +17,11 @@
     "query": "What is NIST AI RMF GOVERN 1.1?",
     "persona": "ml_engineer",
     "frameworks": ["NIST AI RMF"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "NIST AI RMF GOVERN 1.1 requires that policies, processes, procedures, and practices across the organization related to the mapping, measuring, and managing of AI risk are in place, transparent, and implemented effectively. It establishes that organizational leadership is committed to addressing AI risk and that accountability is assigned to specific roles. This subcategory is the foundational governance requirement: without GOVERN 1.1 policies, the rest of the AI RMF framework cannot be operationalized, because there is no organizational mandate to act on risk findings.",
     "must_cite": ["GOVERN 1.1"],
-    "must_not_claim": [],
+    "must_not_claim": ["GOVERN 1.1 is a technical control"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-003",
@@ -29,11 +29,11 @@
     "query": "What are Article 13 transparency requirements?",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 13 of the EU AI Act requires that high-risk AI systems be designed and developed in such a way that their operation is sufficiently transparent to enable deployers to interpret the system's output and use it appropriately. Providers must accompany high-risk AI systems with instructions for use that include: the identity and contact details of the provider, the intended purpose and level of accuracy of the system, foreseeable circumstances in which the system may fail or produce inaccurate outputs, the human oversight measures required, and the expected lifetime and maintenance requirements. The transparency obligation is directed at deployers, not end-users; it ensures deployers have enough information to exercise meaningful human oversight as required by Article 14.",
     "must_cite": ["Article 13"],
-    "must_not_claim": [],
+    "must_not_claim": ["Article 13 requires explainability to end users"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-004",
@@ -41,11 +41,11 @@
     "query": "What does ISO 42001 Clause 6.1 require for risk assessment?",
     "persona": "lead_auditor",
     "frameworks": ["ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "ISO 42001 Clause 6.1 requires organizations to plan actions to address risks and opportunities related to their AI management system. Specifically, the organization must determine the risks and opportunities that need to be addressed to give assurance that the AI management system can achieve its intended results, prevent or reduce undesired effects, and achieve continual improvement. The organization must plan actions to address these risks and opportunities, integrate and implement those actions into its AI management system processes, and evaluate the effectiveness of those actions. Clause 6.1 also cross-references the AI system impact assessment process in Annex A, which requires assessment of AI-specific risks including bias, safety, privacy, and societal impacts.",
     "must_cite": ["Clause 6.1"],
-    "must_not_claim": [],
+    "must_not_claim": ["ISO 42001 Clause 6.1 is equivalent to a penetration test"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-005",
@@ -53,11 +53,11 @@
     "query": "What are Article 14 human oversight requirements?",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 14 of the EU AI Act requires that high-risk AI systems be designed and developed to allow effective oversight by natural persons during the period in which the AI system is in use. Providers must build in tools and interfaces that enable deployers and users to understand the system's capabilities and limitations, monitor its operation, detect anomalies and malfunctions, interpret outputs, and intervene or interrupt the system. Where technically feasible, the system must allow the person in charge to disregard, override, or reverse outputs. The deployer is responsible for designating competent natural persons to exercise this oversight. Human oversight requirements are specifically calibrated to the risk of the system and must be commensurate with that risk.",
     "must_cite": ["Article 14"],
-    "must_not_claim": [],
+    "must_not_claim": ["Article 14 allows fully automated decision-making for high-risk systems"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-006",
@@ -65,11 +65,11 @@
     "query": "What technical documentation is required under Article 11?",
     "persona": "ml_engineer",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
-    "must_cite": ["Article 11"],
-    "must_not_claim": [],
+    "gold_standard_answer": "Article 11 of the EU AI Act requires providers of high-risk AI systems to draw up technical documentation before the system is placed on the market or put into service. The documentation must be kept up to date and must contain sufficient information to allow competent authorities to assess compliance with applicable requirements. Per Annex IV, technical documentation must include: a general description of the AI system including its intended purpose; a detailed description of the system elements and development process including training methodologies, data used, and validation results; information on monitoring, functioning, and control; a description of the risk management system; and details of the conformity assessment procedure applied. The documentation must be retained for ten years after the system is placed on the market.",
+    "must_cite": ["Article 11", "Annex IV"],
+    "must_not_claim": ["Article 11 documentation is optional for CE-marked systems"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-007",
@@ -77,11 +77,11 @@
     "query": "What logging requirements apply under Article 12?",
     "persona": "ml_engineer",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 12 of the EU AI Act requires high-risk AI systems to be capable of automatically recording events relevant to identifying risks and malfunctions throughout the system's lifetime. Logs must enable monitoring of the operation of the high-risk AI system with respect to possible risks. At a minimum, logs must record the period of each use of the system, the reference database against which input data was verified, input data that led to the system's output where technically feasible, and the identity of the natural persons involved in result verification where applicable. Log retention period must align with the applicable legal framework in which the system operates, with a minimum of six months unless other law requires otherwise. Logs must be retained by deployers.",
     "must_cite": ["Article 12"],
-    "must_not_claim": [],
+    "must_not_claim": ["Article 12 logs must be stored by the provider, not the deployer"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-008",
@@ -89,11 +89,11 @@
     "query": "What data governance requirements exist under Article 10?",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 10 of the EU AI Act establishes data governance requirements applicable to high-risk AI systems that use training, validation, and testing data. Training, validation, and testing datasets must be subject to appropriate data governance and management practices covering: the design choices for data collection and origin; relevant data preparation processing operations; formulation of relevant assumptions; assessment of availability, quantity, and suitability of data; examination for possible biases; and identification of any data gaps. Datasets must be relevant, representative, free of errors, and complete to the extent possible for the intended purpose. Special category personal data may be processed for bias detection and correction subject to strict conditions. Data governance obligations fall on the provider of the high-risk AI system.",
     "must_cite": ["Article 10"],
-    "must_not_claim": [],
+    "must_not_claim": ["Article 10 applies to all AI systems regardless of risk classification"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-009",
@@ -101,11 +101,11 @@
     "query": "What post-market monitoring applies under Article 72?",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "Article 72 of the EU AI Act requires providers of high-risk AI systems to establish and document a post-market monitoring system to proactively collect and review experience gained from use of their systems. The system must be part of the provider's quality management system and must actively gather data on the performance of high-risk AI systems throughout their lifetime. The post-market monitoring plan must be part of the technical documentation. Providers must report serious incidents and malfunctions to the relevant market surveillance authorities via the EU database without undue delay. Where serious incidents result in death or serious harm, reporting timelines are shortened. The data collected must be used to update the risk management system and technical documentation accordingly.",
     "must_cite": ["Article 72"],
-    "must_not_claim": [],
+    "must_not_claim": ["Post-market monitoring is optional if the system has CE marking"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-010",
@@ -113,11 +113,11 @@
     "query": "What are ISO 42001 Clause 9 performance evaluation requirements?",
     "persona": "lead_auditor",
     "frameworks": ["ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": ["Clause 9"],
-    "must_not_claim": [],
+    "gold_standard_answer": "ISO 42001 Clause 9 requires organizations to monitor, measure, analyse, and evaluate the performance of their AI management system. Clause 9.1 requires the organization to determine what needs to be monitored and measured, the methods to be used, when monitoring will be performed, and when results will be analysed. Clause 9.2 requires internal audit at planned intervals to determine whether the AI management system conforms to the organization's own requirements and the standard's requirements. Clause 9.3 requires top management to review the AI management system at planned intervals to ensure its continuing suitability, adequacy, and effectiveness. Management review inputs must include results of audits, AI system performance data, and the status of actions from previous reviews.",
+    "must_cite": ["Clause 9", "Clause 9.1", "Clause 9.2", "Clause 9.3"],
+    "must_not_claim": ["ISO 42001 Clause 9 requires quarterly third-party audits"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-011",
@@ -125,11 +125,11 @@
     "query": "How does Article 13 transparency map to NIST AI RMF GOVERN 1.6?",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 13 and NIST AI RMF GOVERN 1.6 address transparency from complementary angles. Article 13 mandates that deployers receive sufficient information to interpret system outputs and apply appropriate oversight — it is a prescriptive legal obligation with a defined list of required disclosures in the instructions for use. NIST GOVERN 1.6 requires that policies and procedures are in place to communicate AI risk information to appropriate stakeholders including consumers, end users, and the public where relevant. The mapping is directional: Article 13 is the regulatory floor that establishes what must be disclosed to deployers; GOVERN 1.6 is the organizational governance mechanism that determines how that disclosure obligation is operationalized internally and extended to downstream stakeholders. A GOVERN 1.6-compliant organization would have a documented transparency policy, designated roles responsible for creating Article 13-compliant instructions, and a process to update those instructions when system capabilities change.",
     "must_cite": ["Article 13", "GOVERN 1.6"],
-    "must_not_claim": [],
+    "must_not_claim": ["GOVERN 1.6 satisfies Article 13 compliance automatically"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-012",
@@ -137,11 +137,11 @@
     "query": "Map EU AI Act Article 9 to ISO 42001 Clause 6.1",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 9 and ISO 42001 Clause 6.1 share a common foundation: both require a systematic, documented risk management process that is iterative and maintained throughout the AI system lifecycle. Article 9 is prescriptive and legally enforceable, requiring providers of high-risk AI systems to implement a specific risk management system with defined outputs including residual risk communication. ISO 42001 Clause 6.1 is a management system requirement that mandates planning to address risks and opportunities to the AI management system itself. The key mapping: Article 9's risk identification and estimation steps align with Clause 6.1's determination of risks and opportunities; Article 9's risk mitigation measures align with Clause 6.1's planned actions; Article 9's testing of mitigation effectiveness aligns with Clause 6.1's evaluation of action effectiveness. Gap: Clause 6.1 is broader (covers organizational risks beyond the AI system) and does not mandate the specific outputs Article 9 requires (e.g., residual risk disclosure to users). An organization implementing both must ensure their Clause 6.1 process explicitly covers Article 9 risks and generates Article 9-required documentation.",
     "must_cite": ["Article 9", "Clause 6.1"],
-    "must_not_claim": [],
+    "must_not_claim": ["ISO 42001 Clause 6.1 certification demonstrates Article 9 compliance"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-013",
@@ -149,11 +149,11 @@
     "query": "How does NIST AI RMF MEASURE function relate to Article 15 accuracy?",
     "persona": "ml_engineer",
     "frameworks": ["NIST AI RMF", "EU AI Act"],
-    "gold_standard_answer": "TODO",
-    "must_cite": ["MEASURE", "Article 15"],
-    "must_not_claim": [],
+    "gold_standard_answer": "EU AI Act Article 15 requires high-risk AI systems to achieve an appropriate level of accuracy, robustness, and cybersecurity and to perform consistently throughout their lifecycle. It requires providers to declare the accuracy metrics in the instructions for use. NIST AI RMF MEASURE function operationalizes how organizations quantify and track the AI risks identified in the MAP function, using defined metrics and evaluation methodologies. The relationship is instrumental: Article 15 sets the regulatory obligation to achieve and declare accuracy levels; the MEASURE function provides the analytical process to assess, benchmark, and monitor that accuracy across system versions and deployment contexts. Specifically, MEASURE 1.1 (metrics) and MEASURE 2.5 (bias evaluation) are directly relevant to Article 15 compliance. A gap exists: Article 15 requires accuracy to be appropriate to the intended purpose and associated risk, but does not specify minimum accuracy thresholds — organizations must use MEASURE-style evaluation to determine what level is appropriate and defensible for their specific use case.",
+    "must_cite": ["Article 15", "MEASURE"],
+    "must_not_claim": ["Article 15 specifies minimum numerical accuracy thresholds"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-014",
@@ -161,11 +161,11 @@
     "query": "Map EU AI Act conformity assessment to NIST AI RMF MAP function",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
-    "must_cite": ["MAP"],
-    "must_not_claim": [],
+    "gold_standard_answer": "EU AI Act conformity assessment (Articles 43–48) is a formal pre-market compliance verification process, either conducted internally by the provider (for most high-risk systems) or by a notified body (for systems listed in Annex I). It produces a declaration of conformity and enables CE marking. NIST AI RMF MAP function is an internal organizational process for categorizing and documenting AI risks and their contexts before the system is deployed. The mapping is conceptual: both processes require systematic documentation of system characteristics, intended use, risk categories, and applicable requirements before deployment. MAP 1.1 (context identification) and MAP 2.1 (scientific and domain expertise) directly support the evidence package needed for a conformity assessment. However, a MAP-compliant internal process does not constitute or substitute for conformity assessment under the EU AI Act — conformity assessment has specific legal outputs (Declaration of Conformity, technical documentation to Annex IV) that a MAP process does not produce unless explicitly designed to do so.",
+    "must_cite": ["Article 43", "MAP"],
+    "must_not_claim": ["A NIST AI RMF MAP process satisfies EU AI Act conformity assessment"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-015",
@@ -173,11 +173,11 @@
     "query": "How do ISO 42001 Annex A controls map to Article 9?",
     "persona": "lead_auditor",
     "frameworks": ["ISO 42001", "EU AI Act"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "ISO 42001 Annex A provides a set of controls for AI management organized across domains including AI system impact assessment (A.6), AI system lifecycle (A.7), and responsible AI operations (A.9). The most direct mapping to EU AI Act Article 9 is through A.6.1 (AI system impact assessment policy) and A.6.2 (AI system impact assessment process), which require organizations to assess risks associated with AI systems across safety, privacy, fairness, and societal dimensions. These align with Article 9's requirement to identify and analyse known and reasonably foreseeable risks. A.9.3 (monitoring of AI systems) maps to Article 9's requirement to continuously monitor risk management effectiveness. However, Annex A controls are informative, not normative — an organization may exclude controls with justification. Article 9, by contrast, is mandatory for all high-risk AI system providers with no exclusions. Organizations should map their Annex A control selections to Article 9 obligations and document any gaps where Annex A provides insufficient specificity.",
     "must_cite": ["Annex A", "Article 9"],
-    "must_not_claim": [],
+    "must_not_claim": ["ISO 42001 Annex A is mandatory in its entirety"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-016",
@@ -185,11 +185,11 @@
     "query": "Compare Article 72 post-market obligations to NIST GOVERN 6.2",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 72 imposes legally binding post-market monitoring obligations: providers must establish a systematic post-market monitoring system, collect performance data proactively, report serious incidents to market surveillance authorities, and update risk management documentation accordingly. Non-compliance can result in regulatory sanctions. NIST AI RMF GOVERN 6.2 requires that policies and procedures are in place to evaluate and improve AI risk management practices based on lessons learned and new information over time. It is a governance control that establishes the organizational mechanism for continuous improvement, not a legal obligation. The key difference: Article 72 mandates specific reporting actions to external authorities within defined timelines; GOVERN 6.2 is an internal governance practice with no external reporting obligation. For organizations operating high-risk AI systems under the EU AI Act, GOVERN 6.2 implementation should be designed to satisfy Article 72 obligations — the internal review cycle must be frequent enough to identify serious incidents within the Article 72 reporting window.",
     "must_cite": ["Article 72", "GOVERN 6.2"],
-    "must_not_claim": [],
+    "must_not_claim": ["GOVERN 6.2 compliance satisfies Article 72 incident reporting requirements"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-017",
@@ -197,11 +197,11 @@
     "query": "Map Article 11 technical documentation to ISO 42001 Clause 7.5",
     "persona": "ml_engineer",
     "frameworks": ["EU AI Act", "ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 11 and Annex IV specify mandatory technical documentation for high-risk AI systems covering system description, development methodology, training data, validation results, risk management outputs, and conformity assessment details. ISO 42001 Clause 7.5 requires organizations to control documented information required by the AI management system, including determining what documentation to create, maintaining it in an appropriate format, and ensuring it remains available and fit for use. The mapping is structural: Clause 7.5 provides the document control framework within which Article 11 documentation must be managed. Specifically, Clause 7.5.3's requirements for version control, retention, and access align directly with Article 11's requirement that documentation be kept up to date and retained for ten years. Gap: Article 11 specifies the content of documentation; Clause 7.5 specifies how that documentation must be controlled. An organization implementing both must ensure their Clause 7.5 document control procedures explicitly cover the Article 11 technical documentation set and its ten-year retention requirement.",
     "must_cite": ["Article 11", "Clause 7.5"],
-    "must_not_claim": [],
+    "must_not_claim": ["Clause 7.5 determines what technical documentation must contain"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-018",
@@ -209,11 +209,11 @@
     "query": "How does NIST AI RMF RESPOND map to Article 20 logging?",
     "persona": "ml_engineer",
     "frameworks": ["NIST AI RMF", "EU AI Act"],
-    "gold_standard_answer": "TODO",
-    "must_cite": ["RESPOND", "Article 20"],
-    "must_not_claim": [],
+    "gold_standard_answer": "EU AI Act Article 20 requires deployers of high-risk AI systems to retain the logs automatically generated by the system to the extent that such logs are under their control, for at least six months or as required by applicable law. These logs are the primary evidence base for incident investigation and regulatory inquiry. NIST AI RMF RESPOND function addresses how organizations respond to AI risks that have been identified, including incident response, communication, and corrective action. The mapping is operational: Article 20 logs are the factual record that enables a RESPOND-compliant incident response process. RESPOND 2.1 (response plans) should be designed to leverage Article 20 logs as their primary data source. RESPOND 1.1 (incident documentation) should reference the Article 20 log retention requirement to ensure organizational retention policies align with the legal minimum. A gap exists: Article 20 does not specify incident response procedures; NIST RESPOND does not specify log retention requirements. Both are needed for a complete operational posture.",
+    "must_cite": ["Article 20", "RESPOND"],
+    "must_not_claim": ["Article 20 requires providers to retain logs on behalf of deployers"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-019",
@@ -221,11 +221,11 @@
     "query": "Compare Article 13 transparency to ISO 42001 Clause 8.4",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 13 requires providers to ensure high-risk AI systems are transparent to deployers, principally through instructions for use that disclose system capabilities, limitations, and oversight requirements. ISO 42001 Clause 8.4 requires organizations to document and communicate relevant information about AI systems to intended users, affected parties, and other stakeholders as appropriate. The intent is aligned: both require that parties interacting with or affected by AI systems receive relevant information about how those systems function and their limitations. However, Article 13 is legally prescriptive about content (the instructions for use must contain specific elements per Annex IV) and audience (the deployer). Clause 8.4 is principle-based and audience-agnostic — it requires the organization to determine who needs what information, without specifying content. For organizations subject to both: Clause 8.4 implementation should explicitly identify deployers as a stakeholder category and ensure that the information delivered to them satisfies Article 13's minimum content requirements.",
     "must_cite": ["Article 13", "Clause 8.4"],
-    "must_not_claim": [],
+    "must_not_claim": ["Clause 8.4 requires disclosure to the general public"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-020",
@@ -233,11 +233,11 @@
     "query": "Map Article 10 data governance to ISO 42001 Clause 8.2",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 10 sets mandatory data governance requirements for training, validation, and testing data used in high-risk AI systems, including requirements for data quality, representativeness, and bias examination. ISO 42001 Clause 8.2 requires organizations to establish, implement, and maintain processes for the responsible development and use of AI systems, including data management processes. The mapping is direct: Clause 8.2's data management requirements provide the operational process framework for satisfying Article 10's data governance obligations. Specifically, Clause 8.2 requires organizations to address data collection, preparation, and quality — each of which corresponds to specific Article 10 requirements. Gap: Article 10 includes a specific provision allowing special category personal data to be processed for bias detection under strict conditions — this is not addressed in Clause 8.2, which does not engage with personal data processing permissions. Organizations subject to both must supplement their Clause 8.2 process with the Article 10 special category data conditions and document that supplement explicitly.",
     "must_cite": ["Article 10", "Clause 8.2"],
-    "must_not_claim": [],
+    "must_not_claim": ["ISO 42001 Clause 8.2 authorizes processing of special category data"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-021",
@@ -245,11 +245,11 @@
     "query": "Compare NIST GOVERN 1.1 to ISO 42001 Clause 4.1",
     "persona": "lead_auditor",
     "frameworks": ["NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "NIST AI RMF GOVERN 1.1 and ISO 42001 Clause 4.1 are both foundational requirements establishing organizational context for AI governance. GOVERN 1.1 requires that policies, processes, and practices for AI risk management are in place, transparent, and effectively implemented, with leadership commitment and clear accountability. ISO 42001 Clause 4.1 requires the organization to determine external and internal issues relevant to its purpose that affect its ability to achieve the intended outcomes of its AI management system. Both require organizations to establish the organizational context before acting on risk, but from different directions: GOVERN 1.1 is accountability-focused (who is responsible and what is the governance mandate), while Clause 4.1 is context-focused (what is the environment the organization operates in). An organization implementing both should use their Clause 4.1 context analysis to inform the scope and design of the governance structures required by GOVERN 1.1. They are complementary, not duplicative.",
     "must_cite": ["GOVERN 1.1", "Clause 4.1"],
-    "must_not_claim": [],
+    "must_not_claim": ["GOVERN 1.1 and Clause 4.1 have identical requirements"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-022",
@@ -257,11 +257,11 @@
     "query": "Map Article 14 human oversight to NIST AI RMF MANAGE 2.2",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
+    "gold_standard_answer": "EU AI Act Article 14 requires that high-risk AI systems be designed to allow effective human oversight, including the ability to monitor, interpret, and override system outputs, and that deployers designate competent persons to exercise that oversight. NIST AI RMF MANAGE 2.2 requires that mechanisms are in place for teams to receive and act on AI system performance feedback and to make adjustments or interventions as appropriate. The mapping is operational: MANAGE 2.2 is the internal organizational process that operationalizes the human oversight structures Article 14 mandates. MANAGE 2.2's requirement for mechanisms to act on performance feedback corresponds to Article 14's requirement for the ability to intervene. Gap: Article 14 requires that oversight capability be built into the AI system itself (a design requirement on the provider); MANAGE 2.2 is an organizational process requirement for the deployer. Both are necessary: the provider must build in the capability under Article 14; the deployer must establish the process under MANAGE 2.2 to exercise it.",
     "must_cite": ["Article 14", "MANAGE 2.2"],
-    "must_not_claim": [],
+    "must_not_claim": ["MANAGE 2.2 compliance satisfies Article 14 for the provider"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-023",
@@ -269,11 +269,11 @@
     "query": "Identify all obligations for a high-risk AI employment decision system under EU AI Act, NIST AI RMF, and ISO 42001",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "An AI system used in employment decisions (recruitment, promotion, termination) is classified as high-risk under EU AI Act Annex III, Category 4. Provider obligations under the EU AI Act include: risk management system (Article 9), data governance for training data including bias examination (Article 10), technical documentation to Annex IV (Article 11), automatic logging of operations (Article 12), instructions for use enabling deployer oversight (Article 13), human oversight design (Article 14), accuracy and robustness requirements (Article 15), and post-market monitoring (Article 72). Deployer obligations include: registering use in the EU database, retaining logs (Article 20), designating human oversight persons, and conducting a fundamental rights impact assessment before deployment. Under NIST AI RMF: GOVERN 1.1 (governance policy), MAP 1.1 (context and risk categorization noting employment sensitivity), MAP 4.1 (affected community impacts), MEASURE 2.5 (bias evaluation across demographic groups), and MANAGE 2.4 (mechanisms for affected parties to raise concerns). Under ISO 42001: Clause 4.1 (organizational context noting employment law constraints), Clause 6.1 (risk planning including bias and discrimination risks), Clause 8.2 (AI system development with fairness controls), Annex A.6.2 (AI impact assessment covering employment discrimination risk). Cross-framework priority: bias and discrimination risk is the highest-priority AI risk category for this use case and must be addressed explicitly under all three frameworks.",
+    "must_cite": ["Annex III", "Article 9", "Article 10", "GOVERN 1.1", "MAP 4.1", "MEASURE 2.5", "Clause 6.1"],
+    "must_not_claim": ["Employment AI systems are exempt from high-risk classification if used internally"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-024",
@@ -281,11 +281,11 @@
     "query": "Multi-framework gap analysis: facial recognition system in law enforcement",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "Real-time remote biometric identification systems (including facial recognition) used in publicly accessible spaces for law enforcement purposes are prohibited under EU AI Act Article 5(1)(d) with narrow exceptions requiring judicial or administrative authorization for specific serious crimes. Post-remote biometric identification systems used in law enforcement are high-risk under Annex III, Category 1 and subject to all high-risk obligations. Gap analysis across frameworks: EU AI Act provides the strongest constraint — the prohibition in Article 5 overrides all other considerations and cannot be satisfied by NIST or ISO controls. NIST AI RMF addresses this use case through GOVERN 1.7 (processes for organizational risk tolerance including prohibited uses), MAP 5.1 (likelihood and magnitude of harm including civil liberties impacts), and MANAGE 4.1 (post-deployment monitoring of performance disparities by demographic group — particularly critical given documented accuracy disparities in facial recognition across racial groups). ISO 42001 Clause 6.1 and Annex A.6.2 require impact assessment covering civil liberties and non-discrimination. Gaps: NIST and ISO do not replicate the EU AI Act's absolute prohibition — organizations relying solely on NIST or ISO compliance would not satisfy EU law. Additionally, neither NIST nor ISO specifies authorization requirements for law enforcement use. A compliant implementation must treat the Article 5 prohibition as the binding constraint, implement the full high-risk obligations for permitted post-remote uses, and ensure NIST MEASURE 2.5 bias evaluation is conducted against the specific demographic populations where the system will be deployed.",
+    "must_cite": ["Article 5", "Annex III", "GOVERN 1.7", "MAP 5.1", "MANAGE 4.1", "Clause 6.1"],
+    "must_not_claim": ["NIST AI RMF compliance authorizes law enforcement facial recognition in the EU"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-025",
@@ -293,11 +293,11 @@
     "query": "Full compliance checklist for an AI medical device under all three frameworks",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "AI medical devices are high-risk under EU AI Act Annex III, Category 5 (safety components of medical devices) and must comply with both the EU AI Act and the Medical Device Regulation (MDR) or In Vitro Diagnostic Regulation (IVDR). EU AI Act checklist: risk management system per Article 9 (must integrate with MDR risk management per ISO 14971); training data governance per Article 10 including clinical data validation; technical documentation per Annex IV; automatic logging per Article 12; instructions for use per Article 13 compatible with MDR labeling requirements; human oversight design per Article 14; accuracy and robustness per Article 15 with declared performance metrics; conformity assessment per Article 43 (notified body required for Class IIb and III medical devices); post-market monitoring per Article 72 integrated with MDR vigilance reporting. NIST AI RMF checklist: GOVERN 1.1 (governance including patient safety policy), MAP 1.5 (organizational risk tolerance in clinical context), MAP 4.1 (patient population impact assessment), MEASURE 1.1 (clinical performance metrics including sensitivity/specificity), MEASURE 2.5 (performance evaluation across patient subgroups including age, sex, ethnicity), MANAGE 2.2 (clinician feedback mechanisms), MANAGE 4.1 (adverse event monitoring). ISO 42001 checklist: Clause 4.1 (regulatory context including MDR, GDPR, clinical governance), Clause 6.1 (patient safety and clinical risk planning), Clause 8.2 (clinical AI development with validation study requirements), Annex A.6.2 (impact assessment covering patient harm, diagnostic error, and health equity). Priority gap: all three frameworks require bias and subgroup performance evaluation, but none specifies clinical validation study design requirements — those come from MDR and guidance from EMA and FDA.",
+    "must_cite": ["Annex III", "Article 9", "Article 43", "MEASURE 2.5", "Clause 8.2"],
+    "must_not_claim": ["MDR certification satisfies EU AI Act conformity assessment for medical AI"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-026",
@@ -305,11 +305,11 @@
     "query": "Identify conflicts between EU AI Act and NIST AI RMF on transparency requirements",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "The EU AI Act and NIST AI RMF approach transparency differently in ways that create potential conflicts for organizations operating across jurisdictions. First, audience scope: Article 13 defines transparency primarily as a deployer-facing obligation (instructions for use), while NIST GOVERN 1.6 and MAP 4.1 contemplate transparency to a broader stakeholder set including affected communities and the public. An organization implementing broad NIST-style stakeholder transparency could inadvertently disclose information that the provider considers proprietary, which may conflict with the provider's trade secret protections under the EU AI Act. Second, explainability: Article 13 does not require individual decision-level explanations for high-risk AI outputs (with limited exceptions in Article 86 for certain automated decisions). NIST GOVERN 1.6 and MEASURE 2.8 encourage explainability as a risk management practice. These are not in direct conflict but can create expectation mismatches with deployers. Third, confidentiality of technical documentation: Article 78 of the EU AI Act protects confidential information in technical documentation from public disclosure by authorities. NIST guidance does not address this constraint and may create pressure for more open disclosure. Practical resolution: treat EU AI Act transparency obligations as the minimum legally required floor; use NIST guidance to identify additional transparency practices that are organizationally beneficial but structure their implementation to avoid disclosures that the EU AI Act would protect as confidential.",
+    "must_cite": ["Article 13", "Article 78", "GOVERN 1.6", "MAP 4.1"],
+    "must_not_claim": ["NIST AI RMF transparency requirements supersede EU AI Act obligations in the EU"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-027",
@@ -317,11 +317,11 @@
     "query": "What evidence documentation must an ML engineer produce for a high-risk AI system across all three frameworks?",
     "persona": "ml_engineer",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "An ML engineer responsible for a high-risk AI system must produce the following evidence documentation across all three frameworks. Under EU AI Act: (1) Training data documentation per Article 10 — data sources, preprocessing steps, bias examination methodology and results, and data quality assessment; (2) Model development documentation per Article 11 and Annex IV — architecture description, training methodology, hyperparameter choices, validation results, and known limitations; (3) Testing and validation records per Article 15 — accuracy metrics declared for the instructions for use, robustness testing results, cybersecurity assessment; (4) Version control records showing the specific model version deployed. Under NIST AI RMF: MEASURE 1.1 evidence — the metrics chosen to evaluate AI risk and their rationale; MEASURE 2.5 evidence — bias evaluation results across relevant subgroups including methodology, dataset, and results; MEASURE 2.13 evidence — testing and evaluation results with documentation of test conditions. Under ISO 42001: Clause 7.5 controlled documents — all of the above in a version-controlled document management system; Annex A.7 evidence — AI system lifecycle documentation including design decisions, validation approach, and known limitations. Cross-framework priority: model cards or equivalent structured documentation covering all of the above serve all three frameworks simultaneously and are the most efficient format for ML engineers to produce and maintain.",
+    "must_cite": ["Article 10", "Article 11", "MEASURE 2.5", "Clause 7.5"],
+    "must_not_claim": ["ML engineers are not responsible for bias documentation — that is a legal function"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-028",
@@ -329,11 +329,11 @@
     "query": "Cross-framework gap analysis: what does EU AI Act require that NIST AI RMF does not address for high-risk systems?",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "NIST AI RMF"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "The EU AI Act imposes several legally binding requirements that have no direct analog in NIST AI RMF. First, conformity assessment (Articles 43–48): the EU AI Act requires a formal pre-market conformity assessment, including notified body involvement for the highest-risk systems, and a Declaration of Conformity. NIST AI RMF has no equivalent pre-market approval mechanism — it is a voluntary risk management framework, not a regulatory gate. Second, EU database registration (Article 71): providers and deployers of certain high-risk AI systems must register in the EU AI Act public database before deployment. NIST has no registration requirement. Third, market surveillance and enforcement (Articles 74–82): the EU AI Act creates a regulatory enforcement apparatus with market surveillance authorities, powers to require corrective action, and penalties up to 3% of global annual turnover. NIST AI RMF has no enforcement mechanism. Fourth, prohibited practices (Article 5): the EU AI Act prohibits specific AI applications absolutely, including social scoring by public authorities and real-time remote biometric identification in public spaces. NIST AI RMF has no prohibited practices list — it relies on organizational risk tolerance determination. Fifth, fundamental rights impact assessment (Article 27): certain deployers must conduct this assessment before deployment. NIST has no equivalent mandatory assessment. Summary: NIST AI RMF is a risk management framework; the EU AI Act is a legal compliance regime. NIST can inform the internal risk processes that support EU AI Act compliance, but it does not substitute for any of the Act's formal legal requirements.",
+    "must_cite": ["Article 5", "Article 43", "Article 71", "Article 27"],
+    "must_not_claim": ["NIST AI RMF compliance implies EU AI Act compliance"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-029",
@@ -341,11 +341,11 @@
     "query": "Map the complete audit trail requirements across EU AI Act, NIST, and ISO 42001",
     "persona": "lead_auditor",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "Audit trail requirements across all three frameworks address different layers of the same operational record. Under EU AI Act: Article 12 requires high-risk AI systems to automatically log operational events including usage periods, input data references, and outputs — retained by deployers for at least six months. Article 11 and Annex IV require technical documentation retained by providers for ten years. Article 72 post-market monitoring records must document performance data, incidents, and corrective actions. Article 20 requires deployers to retain automatically generated logs. These are legally mandatory records with defined retention periods and regulatory access rights. Under NIST AI RMF: GOVERN 1.4 requires documentation of AI risk management practices and decisions. MEASURE 2.13 requires test and evaluation records. MANAGE 2.4 requires records of incidents and responses. GOVERN 6.2 requires records of lessons learned and improvement actions. NIST audit trail requirements are organizational best practices without mandatory retention periods. Under ISO 42001: Clause 7.5 requires controlled documented information including evidence of conformity with the AI management system. Clause 9.1 requires records of monitoring and measurement results. Clause 9.2 requires internal audit records. Clause 10.1 requires records of nonconformities and corrective actions. Integrated audit trail architecture: a compliant organization should implement a three-layer audit record: (1) system-level operational logs satisfying Article 12 (automated, tamper-evident, six-month minimum); (2) development and validation records satisfying Article 11 and MEASURE 2.13 (ten-year retention for EU AI Act); (3) management system records satisfying ISO 42001 Clause 7.5 and NIST GOVERN 1.4 (duration per organizational policy). A SHA-256 hash chain linking layers one and three provides cryptographic evidence of record integrity across all three frameworks simultaneously.",
+    "must_cite": ["Article 12", "Article 20", "GOVERN 1.4", "MEASURE 2.13", "Clause 7.5", "Clause 9.2"],
+    "must_not_claim": ["Six-month log retention satisfies Article 11 technical documentation requirements"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   },
   {
     "id": "BT-030",
@@ -353,10 +353,10 @@
     "query": "Identify all third-party obligations for deployers of high-risk AI systems under all three frameworks",
     "persona": "legal_counsel",
     "frameworks": ["EU AI Act", "NIST AI RMF", "ISO 42001"],
-    "gold_standard_answer": "TODO",
-    "must_cite": [],
-    "must_not_claim": [],
+    "gold_standard_answer": "Deployers of high-risk AI systems face third-party obligations under all three frameworks across four categories. First, regulatory obligations under EU AI Act: deployers must register certain high-risk AI system uses in the EU database (Article 71); notify providers of serious incidents and malfunctions (Article 22); conduct fundamental rights impact assessments before deployment in specific contexts (Article 27); provide affected individuals with information about automated decision-making upon request (Article 86); and cooperate with market surveillance authorities (Article 93). Second, supply chain obligations under EU AI Act: deployers must verify that providers have completed conformity assessment and affixed CE marking before deployment (Article 50 for general-purpose systems). If a deployer modifies a high-risk AI system substantially, they assume provider obligations (Article 25). Third, under NIST AI RMF: GOVERN 5.1 requires that organizational risk policies address third-party AI system risks; MAP 5.2 requires assessing AI supplier trustworthiness; MANAGE 3.1 requires mechanisms to communicate risk information up and down the supply chain. These are organizational practices without third-party legal duties. Fourth, under ISO 42001: Clause 8.4 requires organizations to control externally provided AI systems and services, including determining what information third parties need. Annex A.10 addresses supplier relationships. Priority for legal counsel: the EU AI Act third-party obligations are legally enforceable and several have external parties as beneficiaries (affected individuals under Article 86, authorities under Article 93). NIST and ISO obligations are internal governance practices. Document all third-party notification and cooperation procedures in a single register that maps to the specific EU AI Act article triggering each obligation.",
+    "must_cite": ["Article 22", "Article 25", "Article 27", "Article 86", "GOVERN 5.1", "Clause 8.4"],
+    "must_not_claim": ["Deployers bear no third-party obligations if the provider completed conformity assessment"],
     "annotated_by": "Kareem Mohammed",
-    "annotation_date": "TODO"
+    "annotation_date": "2026-05-23"
   }
 ]
