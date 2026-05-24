@@ -301,6 +301,11 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
 .si-note{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
 .si-note-item{font-size:10.5px;font-family:var(--mono);color:var(--ink3);line-height:1.6}
 </style>
+<!-- SimpleAnalytics — privacy-first, no cookies, GDPR compliant -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
+<!-- jsPDF — client-side audit trail PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <!-- DISCLAIMER BANNER -->
@@ -484,6 +489,12 @@ table.atbl{width:100%;border-collapse:collapse;font-size:12px}
                 <div class="abox" data-tip="Claim-level NLI · PASS / FLAG / GAP_REPORT routing · SHA-256 audit log · DeBERTa-v3"><div class="ag-num">Agent III</div><div class="ag-name">Zero-Trust Critic</div><div class="ag-stat"><span class="ag-hi" id="claims-val">—</span> claims verified · DeBERTa</div></div>
               </div>
               <div class="ans-box" id="ans-box"></div>
+              <div style="margin-top:12px;text-align:right;">
+                <button id="export-pdf-btn" onclick="exportAuditPDF()" style="display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;" onmouseover="this.style.background='var(--accent-bg)';this.style.borderColor='rgba(26,79,214,.3)';this.style.color='var(--accent)'" onmouseout="this.style.background='var(--surface2)';this.style.borderColor='var(--border2)';this.style.color='var(--ink2)'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  Export Audit Trail PDF
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -845,6 +856,7 @@ Be precise, cite specific articles, and focus on actionable compliance steps.</d
 <script>
 const API_BASE = 'https://regulens-api-bnlw.onrender.com';
 let persona = 'lead_auditor', isRec = false, recognition = null, qCount = 27;
+let lastQueryResult = null;
 
 const SECTION_TITLES = {
   query: 'Compliance Query',
@@ -904,6 +916,7 @@ function fillTemplate(text) {
 async function runQuery() {
   const question = document.getElementById('qtext').value.trim();
   if (!question) return;
+  if (typeof sa_event !== 'undefined') sa_event('query_submit', { persona });
 
   const loading = document.getElementById('loading');
   const result = document.getElementById('result');
@@ -936,6 +949,7 @@ async function runQuery() {
 
     const data = await res.json();
     const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
+    lastQueryResult = { query: question, persona, data, elapsed, timestamp: new Date().toISOString() };
 
     // QueryV2Response field mapping
     const answer = data.raw_answer || data.answer || data.result || JSON.stringify(data, null, 2);
@@ -959,6 +973,7 @@ async function runQuery() {
 
     // THING 2 — if 0 claims pass, override to GAP REPORT regardless of API verdict
     const forceGap = claims.length > 0 && passClaims === 0;
+    if (forceGap && typeof sa_event !== 'undefined') sa_event('gap_report', { persona });
     const effectiveVerdict = forceGap ? 'GAP_REPORT' : rawVerdict;
     const vc = verdictMap[effectiveVerdict] || 'vpart';
     const vLabel = forceGap
@@ -1058,6 +1073,7 @@ function toggleMic() {
 function handleFile(input) {
   if (!input.files.length) return;
   const name = input.files[0].name;
+  if (typeof sa_event !== 'undefined') sa_event('document_upload');
   document.getElementById('uplbl').innerHTML = `<span class="ftag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>${name}<span class="ftx" onclick="clearFile(event)">✕</span></span>`;
 }
 
@@ -1070,6 +1086,170 @@ function clearFile(e) {
 document.getElementById('qtext').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) runQuery();
 });
+
+function exportAuditPDF() {
+  if (!lastQueryResult) { alert('Run a query first.'); return; }
+  if (typeof window.jspdf === 'undefined') { alert('jsPDF not loaded — check network connection.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  const usable = pw - margin * 2;
+  let y = margin;
+
+  const { query, persona: p, data, elapsed, timestamp } = lastQueryResult;
+  const claims = Array.isArray(data.claims) ? data.claims : [];
+  const verdict = data.overall_verdict || data.verdict || 'N/A';
+  const confidence = typeof data.avg_confidence === 'number' ? data.avg_confidence.toFixed(4) : '—';
+  const auditHashes = Array.isArray(data.audit_hashes) ? data.audit_hashes : [];
+  const thresholds = { lead_auditor: 0.96, ml_engineer: 0.88, legal_counsel: 0.96, hr_auditor: 0.92, qa_engineer: 0.90 };
+  const threshold = thresholds[p] || 0.88;
+
+  const lineH = 5.5;
+  const addText = (text, opts = {}) => {
+    const { size = 9, bold = false, color = [30, 30, 30], indent = 0 } = opts;
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(text, usable - indent);
+    lines.forEach(line => {
+      if (y > 270) { doc.addPage(); y = margin; }
+      doc.text(line, margin + indent, y);
+      y += lineH;
+    });
+  };
+  const addRule = (color = [220, 220, 215]) => {
+    doc.setDrawColor(...color);
+    doc.line(margin, y, pw - margin, y);
+    y += 4;
+  };
+
+  // PAGE 1 — HEADER
+  doc.setFillColor(26, 79, 214);
+  doc.rect(0, 0, pw, 14, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ReguLens Compliance Intelligence Report', margin, 9.5);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('v1 — Academic Prototype', pw - margin, 9.5, { align: 'right' });
+  y = 22;
+
+  addText('QUERY', { size: 7.5, bold: true, color: [120, 120, 120] });
+  addText(query, { size: 10, bold: false });
+  y += 2;
+  addRule();
+
+  const metaRows = [
+    ['Persona', p.replace('_', ' ')],
+    ['NLI Threshold', String(threshold)],
+    ['Avg Confidence', confidence],
+    ['Timestamp', timestamp],
+    ['Response Time', elapsed],
+    ['Audit Hash', auditHashes.length > 0 ? auditHashes[auditHashes.length - 1] : 'N/A'],
+  ];
+  metaRows.forEach(([label, val]) => {
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ':', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(30, 30, 30);
+    doc.text(val, margin + 38, y);
+    y += lineH;
+  });
+  y += 3;
+
+  // Verdict badge
+  const vColors = {
+    COMPLIANT: [18, 122, 76], 'PARTIALLY COMPLIANT': [160, 90, 0],
+    NON_COMPLIANT: [192, 57, 43], INSUFFICIENT_EVIDENCE: [100, 100, 100]
+  };
+  const vc = vColors[verdict] || [100, 100, 100];
+  doc.setFillColor(...vc);
+  doc.roundedRect(margin, y, 70, 8, 2, 2, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Overall Verdict: ' + verdict, margin + 3, y + 5.5);
+  y += 14;
+  addRule();
+
+  // PAGE 2+ — CLAIMS TABLE
+  if (claims.length > 0) {
+    addText('CLAIM-LEVEL VERIFICATION', { size: 8, bold: true, color: [26, 79, 214] });
+    y += 2;
+
+    claims.forEach((claim, i) => {
+      if (y > 260) { doc.addPage(); y = margin; }
+      const claimText = claim.claim_text || claim.text || '';
+      const nliVerdict = (claim.nli_verdict || claim.verdict || 'neutral').toUpperCase();
+      const conf = claim.confidence != null ? (claim.confidence * 100).toFixed(1) + '%' : '—';
+      const decision = claim.decision || '—';
+      const citedSpan = claim.cited_span || '';
+
+      const decColor = decision === 'PASS' ? [18, 122, 76] : decision === 'BLOCK' ? [192, 57, 43] : [160, 90, 0];
+
+      addText(`Claim ${i + 1}`, { size: 8, bold: true });
+      addText(claimText, { size: 8.5, indent: 4 });
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(`NLI: ${nliVerdict}  |  Confidence: ${conf}  |  Threshold: ${threshold}`, margin + 4, y);
+      y += lineH;
+      doc.setTextColor(...decColor);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Decision: ${decision}`, margin + 4, y);
+      y += lineH;
+
+      if (citedSpan) {
+        doc.setTextColor(80, 80, 80);
+        doc.setFont('helvetica', 'italic');
+        const spanLines = doc.splitTextToSize('Source: ' + citedSpan.substring(0, 200), usable - 8);
+        spanLines.forEach(line => {
+          if (y > 270) { doc.addPage(); y = margin; }
+          doc.text(line, margin + 4, y);
+          y += 4.5;
+        });
+      }
+      y += 2;
+      doc.setDrawColor(235, 235, 230);
+      doc.line(margin, y, pw - margin, y);
+      y += 4;
+    });
+  } else {
+    addText('No claim-level data returned for this query.', { size: 9, color: [120, 120, 120] });
+    y += 4;
+  }
+
+  // FINAL PAGE — CHAIN OF CUSTODY
+  if (y > 240) { doc.addPage(); y = margin; }
+  addRule([200, 200, 200]);
+  addText('CHAIN OF CUSTODY', { size: 8, bold: true, color: [26, 79, 214] });
+  y += 2;
+
+  if (auditHashes.length > 0) {
+    auditHashes.forEach((hash, i) => {
+      addText(`[${i + 1}] ${hash}`, { size: 7.5, color: [80, 80, 80], indent: 4 });
+    });
+  } else {
+    addText('No audit hash chain available.', { size: 8, color: [120, 120, 120], indent: 4 });
+  }
+  y += 6;
+  addRule();
+
+  addText('DISCLAIMER', { size: 7.5, bold: true, color: [120, 120, 120] });
+  addText(
+    'Generated by ReguLens v1 — Academic prototype. Outputs are AI-generated and require human review before use in any compliance decision. Not legal advice.',
+    { size: 7.5, color: [120, 120, 120] }
+  );
+
+  // Save
+  const fname = `ReguLens_Audit_${timestamp.slice(0,16).replace('T','_').replace(':','-')}.pdf`;
+  doc.save(fname);
+}
 
 // === ANIMATIONS ===
 

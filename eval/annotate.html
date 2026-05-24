@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReguLens — Claim Annotation Tool</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+  header { background: #1a1f2e; border-bottom: 1px solid #2d3748; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 18px; font-weight: 600; color: #fff; }
+  header .badge { background: #2563eb; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+  .controls button { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-secondary { background: #374151; color: #e2e8f0; }
+  .btn-success { background: #059669; color: #fff; }
+  .btn-danger { background: #dc2626; color: #fff; }
+  input[type="file"] { display: none; }
+  .progress { background: #1a1f2e; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; gap: 24px; font-size: 13px; }
+  .progress span { color: #94a3b8; }
+  .progress strong { color: #e2e8f0; }
+  .task-header { background: #1e2535; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .task-id { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .task-query { font-size: 15px; font-weight: 500; color: #e2e8f0; margin-bottom: 8px; }
+  .task-meta { display: flex; gap: 12px; font-size: 12px; }
+  .tag { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .tag-tier-simple { background: #064e3b; color: #6ee7b7; }
+  .tag-tier-moderate { background: #1e3a5f; color: #93c5fd; }
+  .tag-tier-complex { background: #4c1d95; color: #c4b5fd; }
+  .tag-persona { background: #1f2937; color: #9ca3af; }
+  .claim-card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .claim-card.annotated { border-color: #059669; }
+  .claim-id { font-size: 11px; color: #64748b; margin-bottom: 6px; }
+  .claim-text { font-size: 14px; color: #e2e8f0; margin-bottom: 8px; line-height: 1.5; }
+  .nli-verdict { font-size: 12px; margin-bottom: 10px; }
+  .nli-verdict .label { color: #64748b; }
+  .nli-verdict .val { font-weight: 600; padding: 1px 6px; border-radius: 3px; }
+  .val-entail { background: #064e3b; color: #6ee7b7; }
+  .val-neutral { background: #1f2937; color: #9ca3af; }
+  .val-contradict { background: #7f1d1d; color: #fca5a5; }
+  .source-span { background: #111827; border-left: 3px solid #374151; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; color: #9ca3af; line-height: 1.5; border-radius: 0 4px 4px 0; }
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-option { cursor: pointer; }
+  .radio-option input { display: none; }
+  .radio-option span { display: inline-block; padding: 5px 14px; border-radius: 5px; font-size: 12px; font-weight: 500; border: 1.5px solid #374151; color: #9ca3af; transition: all 0.15s; }
+  .radio-option input:checked + span.opt-supported { background: #064e3b; border-color: #059669; color: #6ee7b7; }
+  .radio-option input:checked + span.opt-unsupported { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
+  .radio-option input:checked + span.opt-contradicted { background: #7f1d1d; border-color: #dc2626; color: #fca5a5; }
+  .answer-scores { background: #111827; border-radius: 6px; padding: 14px; margin-top: 16px; }
+  .answer-scores h4 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .score-label { width: 180px; font-size: 13px; color: #9ca3af; flex-shrink: 0; }
+  .star-group { display: flex; gap: 4px; }
+  .star { cursor: pointer; font-size: 18px; color: #374151; transition: color 0.1s; }
+  .star.active { color: #f59e0b; }
+  .binary-group { display: flex; gap: 8px; }
+  .binary-btn { padding: 4px 12px; border-radius: 4px; border: 1.5px solid #374151; background: none; color: #9ca3af; font-size: 12px; cursor: pointer; }
+  .binary-btn.active-yes { background: #064e3b; border-color: #059669; color: #6ee7b7; }
+  .binary-btn.active-no { background: #7f1d1d; border-color: #dc2626; color: #fca5a5; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .nav button { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; }
+  .empty { text-align: center; padding: 60px; color: #4b5563; }
+  .empty h3 { font-size: 16px; margin-bottom: 8px; }
+  .annotation-count { display: inline-block; background: #2563eb; color: #fff; border-radius: 10px; font-size: 11px; padding: 1px 7px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ReguLens Annotation Tool</h1>
+  <span class="badge">Phase 6C</span>
+  <div style="margin-left:auto; display:flex; gap:8px;">
+    <label class="controls" style="margin:0">
+      <button class="btn-secondary" onclick="document.getElementById('file-input').click()">Load Results JSON</button>
+      <input type="file" id="file-input" accept=".json" onchange="loadResultsFile(event)">
+    </label>
+    <button class="btn-success" onclick="exportAnnotations()">Export Annotations</button>
+    <button class="btn-danger" onclick="clearAll()">Clear All</button>
+  </div>
+</header>
+
+<div class="container">
+  <div id="progress-bar" class="progress" style="display:none">
+    <span>Task <strong id="prog-task">-</strong></span>
+    <span>Annotated <strong id="prog-ann">0</strong> / <strong id="prog-total">0</strong> claims</span>
+    <span>Tasks complete <strong id="prog-task-done">0</strong> / <strong id="prog-task-total">0</strong></span>
+  </div>
+
+  <div id="task-nav" style="display:none; margin-bottom:16px;">
+    <select id="task-select" style="background:#1a1f2e; border:1px solid #2d3748; color:#e2e8f0; padding:8px 12px; border-radius:6px; font-size:13px;" onchange="goToTask(this.value)"></select>
+  </div>
+
+  <div id="main-panel">
+    <div class="empty">
+      <h3>No results loaded</h3>
+      <p>Click "Load Results JSON" to load output from run_evaluation.py</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let results = [];
+let annotations = {};
+let currentTaskIdx = 0;
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+
+function saveToStorage() {
+  localStorage.setItem('regulens_annotations', JSON.stringify(annotations));
+}
+
+function loadFromStorage() {
+  const saved = localStorage.getItem('regulens_annotations');
+  if (saved) {
+    try { annotations = JSON.parse(saved); } catch {}
+  }
+}
+
+// ── File loading ──────────────────────────────────────────────────────────────
+
+function loadResultsFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      results = JSON.parse(e.target.result);
+      if (!Array.isArray(results)) results = [results];
+      loadFromStorage();
+      buildTaskSelect();
+      renderTask(0);
+      document.getElementById('progress-bar').style.display = 'flex';
+      document.getElementById('task-nav').style.display = 'block';
+      updateProgress();
+    } catch (err) {
+      alert('Invalid JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+
+function buildTaskSelect() {
+  const sel = document.getElementById('task-select');
+  sel.innerHTML = '';
+  results.forEach((r, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${r.task_id || ('Task ' + (i+1))} (${r.tier || '?'}) — ${(r.query || '').slice(0, 60)}`;
+    sel.appendChild(opt);
+  });
+}
+
+function goToTask(idx) {
+  currentTaskIdx = parseInt(idx);
+  renderTask(currentTaskIdx);
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+
+function renderTask(idx) {
+  if (!results.length) return;
+  const r = results[idx];
+  const taskId = r.task_id || ('task_' + idx);
+  if (!annotations[taskId]) annotations[taskId] = { claims: {}, answer_scores: {} };
+
+  document.getElementById('prog-task').textContent = `${idx + 1} / ${results.length}`;
+  document.getElementById('task-select').value = idx;
+
+  let html = `
+    <div class="task-header">
+      <div class="task-id">${taskId}</div>
+      <div class="task-query">${escHtml(r.query || '')}</div>
+      <div class="task-meta">
+        <span class="tag tag-tier-${r.tier || 'simple'}">${r.tier || 'simple'}</span>
+        <span class="tag tag-persona">${r.persona || ''}</span>
+        <span class="tag tag-persona">${(r.frameworks || []).join(' · ')}</span>
+        <span class="tag tag-persona">verdict: ${r.overall_verdict || 'N/A'}</span>
+        <span class="tag tag-persona">${r.elapsed_seconds || '?'}s</span>
+      </div>
+    </div>`;
+
+  const claims = r.claims || [];
+  if (claims.length === 0) {
+    html += `<div style="color:#64748b; font-size:13px; margin-bottom:16px;">No claims returned for this task.</div>`;
+  }
+
+  claims.forEach((claim, ci) => {
+    const claimId = claim.claim_id || claim.id || `claim_${ci}`;
+    const ann = annotations[taskId].claims[claimId] || {};
+    const verdictRaw = claim.nli_verdict || claim.verdict || 'neutral';
+    const conf = claim.confidence != null ? (claim.confidence * 100).toFixed(1) + '%' : 'N/A';
+    const annotated = ann.human_label ? ' annotated' : '';
+
+    html += `
+      <div class="claim-card${annotated}" id="card-${taskId}-${claimId}">
+        <div class="claim-id">Claim ${ci + 1} / ${claims.length} · ID: ${claimId}</div>
+        <div class="claim-text">${escHtml(claim.claim_text || claim.text || '')}</div>
+        <div class="nli-verdict">
+          <span class="label">NLI: </span>
+          <span class="val val-${verdictRaw}">${verdictRaw}</span>
+          &nbsp; confidence: ${conf}
+          &nbsp; decision: ${claim.decision || '—'}
+        </div>
+        ${claim.cited_span ? `<div class="source-span">${escHtml(claim.cited_span)}</div>` : ''}
+        <div class="radio-group">
+          ${['supported','unsupported','contradicted'].map(opt => `
+            <label class="radio-option">
+              <input type="radio" name="claim-${taskId}-${claimId}" value="${opt}"
+                ${ann.human_label === opt ? 'checked' : ''}
+                onchange="annotateClaim('${taskId}','${claimId}','${opt}','${ci}', '${escHtml(claim.claim_text || claim.text || '')}')">
+              <span class="opt-${opt}">${opt.charAt(0).toUpperCase() + opt.slice(1)}</span>
+            </label>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  // Answer-level scoring
+  const as = annotations[taskId].answer_scores;
+  html += `
+    <div class="answer-scores">
+      <h4>Answer-Level Scoring (1–5)</h4>
+      ${['correctness','completeness','legal_defensibility','citation_quality'].map(dim => `
+        <div class="score-row">
+          <div class="score-label">${dim.replace('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}</div>
+          <div class="star-group" id="stars-${taskId}-${dim}">
+            ${[1,2,3,4,5].map(n => `
+              <span class="star ${(as[dim] || 0) >= n ? 'active' : ''}"
+                onclick="setScore('${taskId}','${dim}',${n})">★</span>`).join('')}
+          </div>
+          <span style="font-size:12px; color:#64748b; margin-left:8px;">${as[dim] ? as[dim]+'/5' : '—'}</span>
+        </div>`).join('')}
+      <div class="score-row">
+        <div class="score-label">Would use without modification</div>
+        <div class="binary-group">
+          <button class="binary-btn ${as.would_use_without_modification === true ? 'active-yes' : ''}"
+            onclick="setBinary('${taskId}', true)">Yes</button>
+          <button class="binary-btn ${as.would_use_without_modification === false ? 'active-no' : ''}"
+            onclick="setBinary('${taskId}', false)">No</button>
+        </div>
+      </div>
+    </div>`;
+
+  html += `
+    <div class="nav">
+      <button class="btn-secondary" onclick="prevTask()" ${idx === 0 ? 'disabled' : ''}>← Previous</button>
+      <span style="font-size:13px; color:#64748b;">${idx + 1} of ${results.length}</span>
+      <button class="btn-primary" onclick="nextTask()" ${idx === results.length - 1 ? 'disabled' : ''}>Next →</button>
+    </div>`;
+
+  document.getElementById('main-panel').innerHTML = html;
+}
+
+function nextTask() { if (currentTaskIdx < results.length - 1) { currentTaskIdx++; renderTask(currentTaskIdx); document.getElementById('task-select').value = currentTaskIdx; } }
+function prevTask() { if (currentTaskIdx > 0) { currentTaskIdx--; renderTask(currentTaskIdx); document.getElementById('task-select').value = currentTaskIdx; } }
+
+// ── Annotation handlers ───────────────────────────────────────────────────────
+
+function annotateClaim(taskId, claimId, label, claimIdx, claimText) {
+  if (!annotations[taskId]) annotations[taskId] = { claims: {}, answer_scores: {} };
+  annotations[taskId].claims[claimId] = { human_label: label, claim_text: claimText };
+  const card = document.getElementById(`card-${taskId}-${claimId}`);
+  if (card) card.classList.add('annotated');
+  saveToStorage();
+  updateProgress();
+}
+
+function setScore(taskId, dim, value) {
+  if (!annotations[taskId]) annotations[taskId] = { claims: {}, answer_scores: {} };
+  annotations[taskId].answer_scores[dim] = value;
+  const stars = document.querySelectorAll(`#stars-${taskId}-${dim} .star`);
+  stars.forEach((s, i) => s.classList.toggle('active', i < value));
+  saveToStorage();
+}
+
+function setBinary(taskId, value) {
+  if (!annotations[taskId]) annotations[taskId] = { claims: {}, answer_scores: {} };
+  annotations[taskId].answer_scores.would_use_without_modification = value;
+  renderTask(currentTaskIdx);
+  saveToStorage();
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+
+function updateProgress() {
+  let totalClaims = 0, annClaims = 0, tasksDone = 0;
+  results.forEach(r => {
+    const taskId = r.task_id;
+    const claims = r.claims || [];
+    totalClaims += claims.length;
+    const taskAnn = annotations[taskId] || {};
+    const annCount = Object.keys(taskAnn.claims || {}).length;
+    annClaims += annCount;
+    if (claims.length > 0 && annCount >= claims.length) tasksDone++;
+  });
+  document.getElementById('prog-ann').textContent = annClaims;
+  document.getElementById('prog-total').textContent = totalClaims;
+  document.getElementById('prog-task-done').textContent = tasksDone;
+  document.getElementById('prog-task-total').textContent = results.length;
+}
+
+// ── Export ────────────────────────────────────────────────────────────────────
+
+function exportAnnotations() {
+  const blob = new Blob([JSON.stringify(annotations, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `annotations_${new Date().toISOString().slice(0,16).replace('T','_')}.json`;
+  a.click();
+}
+
+function clearAll() {
+  if (!confirm('Clear all annotations? This cannot be undone.')) return;
+  annotations = {};
+  localStorage.removeItem('regulens_annotations');
+  updateProgress();
+  if (results.length) renderTask(currentTaskIdx);
+}
+
+function escHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
